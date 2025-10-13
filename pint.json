@@ -1,0 +1,7 @@
+{
+    "rules": {
+        "phpdoc_align": {
+            "align": "left"
+        }
+    }
+}
