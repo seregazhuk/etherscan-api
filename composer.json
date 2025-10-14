@@ -35,15 +35,18 @@
         "test:cr": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-html build/coverage-all",
         "test:unit:cr": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --testsuite unit  --coverage-html build/coverage-unit",
         "test:integration": "phpunit --testsuite integration --no-coverage",
-        "lint": "./vendor/bin/pint",
-        "stan": "phpstan analyse -c phpstan.neon --ansi --xdebug",
+        "pint-fix": "./vendor/bin/pint",
+        "pint": "./vendor/bin/pint --test",
+        "rector": "./vendor/bin/rector",
+        "stan": "phpstan analyse -c phpstan.neon --ansi",
         "test": [
             "@test:unit"
         ],
         "checks": [
-            "@phplint",
-            "@phpstan",
-            "@test"
+            "@test",
+            "@rector",
+            "@pint-fix",
+            "@stan"
         ]
     },
     "prefer-stable": true,
@@ -60,6 +63,7 @@
     "require-dev": {
         "laravel/pint": "^1.20",
         "phpstan/phpstan": "^1.9",
-        "phpunit/phpunit": "^10.1.0"
+        "phpunit/phpunit": "^10.1.0",
+        "rector/rector": "^1.2"
     }
 }

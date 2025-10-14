@@ -70,11 +70,11 @@ jobs:
 
       - name: Run Pint
         run: |
-          composer run lint
+          composer pint
 
       - name: Run Phpstan
         run: |
-          composer run stan
+          composer stan
 
       - name: Run tests with Phpunit
         run: |
