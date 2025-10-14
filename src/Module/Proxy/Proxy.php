@@ -22,6 +22,22 @@ final class Proxy
             'txhash' => $hash,
         ];
         $response = $this->client->sendRequest(self::MODULE_NAME, 'eth_getTransactionByHash', $params);
+        /** @var array{result: array{
+         *     blockHash: string,
+         *     blockNumber: string,
+         *     from: string,
+         *     gas: string,
+         *     gasPrice: string,
+         *     maxFeePerGas: string,
+         *     maxPriorityFeePerGas: string,
+         *     hash: string,
+         *     input: string,
+         *     nonce: string,
+         *     to: string,
+         *     transactionIndex: string,
+         *     value: string,
+         *     type: string
+         * }} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
         return new TransactionByHashInfo(
@@ -48,6 +64,7 @@ final class Proxy
     public function getBlockNumber(): string
     {
         $response = $this->client->sendRequest(self::MODULE_NAME, 'eth_blockNumber');
+        /** @var array{result: string} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
         return $json['result'];
@@ -59,6 +76,7 @@ final class Proxy
     public function sendRawTransaction(string $hex): string
     {
         $response = $this->client->sendRequest(self::MODULE_NAME, 'eth_sendRawTransaction', ['hex' => $hex]);
+        /** @var array{result: string} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
         return $json['result'];

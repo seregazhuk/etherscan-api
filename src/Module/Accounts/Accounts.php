@@ -42,6 +42,10 @@ final class Accounts
             'tag' => $tag->value,
         ];
         $response = $this->client->sendRequest(self::MODULE_NAME, 'balancemulti', $params);
+        /** @var array{result: array<int, array{
+         *     account: string,
+         *     balance: string,
+         * }>} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
         return array_map(fn(array $balance): Balance => new Balance($balance['account'], $balance['balance']), $json['result']);

@@ -4,7 +4,7 @@
     "type": "library",
     "license": "MIT",
     "minimum-stability": "dev",
-    "authords": [
+    "authors": [
         {
             "name": "Sergey Zhuk",
             "email": "seregazhuk88@gmail.com",
