@@ -23,6 +23,7 @@ final class Accounts
         ];
         $response = $this->client->sendRequest(self::MODULE_NAME, 'balance', $params);
 
+        /** @var array{result: string} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
         return $json['result'];
