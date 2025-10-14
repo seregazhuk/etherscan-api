@@ -21,6 +21,7 @@ final class Tokens
     {
         $params = ['address' => $address, 'contractaddress' => $contractAddress];
         $response = $this->client->sendRequest(self::MODULE_NAME_ACCOUNT, 'tokenbalance', $params);
+        /** @var array{result: string} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
         return $json['result'];
@@ -33,6 +34,7 @@ final class Tokens
     {
         $params = ['contractaddress' => $contractAddress];
         $response = $this->client->sendRequest(self::MODULE_NAME_STATS, 'tokensupply', $params);
+        /** @var array{result: string} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
         return $json['result'];

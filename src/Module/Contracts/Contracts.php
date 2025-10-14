@@ -18,6 +18,7 @@ final class Contracts
     public function getAbi(string $address): string
     {
         $response = $this->client->sendRequest(self::MODULE_NAME, 'getabi', ['address' => $address]);
+        /** @var array{result: string} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
         return $json['result'];
@@ -31,9 +32,20 @@ final class Contracts
     public function getSourceCode(string $address): array
     {
         $response = $this->client->sendRequest(self::MODULE_NAME, 'getsourcecode', ['address' => $address]);
+        /** @var array{result: array<int, array{
+         *     SourceCode: string,
+         *     ABI: string,
+         *     ContractName: string,
+         *     CompilerVersion: string,
+         *     OptimizationUsed: string,
+         *     ConstructorArguments: string,
+         *     EVMVersion: string,
+         *     Proxy: string,
+         *     LicenseType: string
+         * }>} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
-        return array_map(fn(array $raw): \seregazhuk\EtherscanApi\Module\Contracts\ContractSourceCode => new ContractSourceCode(
+        return array_map(fn(array $raw): ContractSourceCode => new ContractSourceCode(
             $raw['SourceCode'],
             $raw['ABI'],
             $raw['ContractName'],
