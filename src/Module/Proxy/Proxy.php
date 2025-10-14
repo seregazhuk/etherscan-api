@@ -41,4 +41,26 @@ final class Proxy
             $json['result']['type'],
         );
     }
+
+    /**
+     * @see https://docs.etherscan.io/api-endpoints/geth-parity-proxy#eth_blocknumber
+     */
+    public function getBlockNumber(): string
+    {
+        $response = $this->client->sendRequest(self::MODULE_NAME, 'eth_blockNumber');
+        $json = json_decode($response->getBody()->getContents(), true);
+
+        return $json['result'];
+    }
+
+    /**
+     * @see https://docs.etherscan.io/api-endpoints/geth-parity-proxy#eth_sendrawtransaction
+     */
+    public function sendRawTransaction(string $hex): string
+    {
+        $response = $this->client->sendRequest(self::MODULE_NAME, 'eth_sendRawTransaction', ['hex' => $hex]);
+        $json = json_decode($response->getBody()->getContents(), true);
+
+        return $json['result'];
+    }
 }

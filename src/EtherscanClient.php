@@ -8,7 +8,7 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class EtherscanClient
+final class EtherscanClient
 {
     public function __construct(
         private readonly ClientInterface $client,
@@ -20,7 +20,7 @@ class EtherscanClient
     /**
      * @param array<string, string> $params
      */
-    public function sendRequest(string $module, string $action, array $params): ResponseInterface
+    public function sendRequest(string $module, string $action, array $params = []): ResponseInterface
     {
         $params = array_merge([
             'chainid' => $this->chainId->value,
@@ -28,7 +28,7 @@ class EtherscanClient
             'action' => $action,
             'apikey' => $this->apiKey,
         ], $params);
-        $request = $this->requestFactory->createRequest('GET', '/v2/api?'.http_build_query($params));
+        $request = $this->requestFactory->createRequest('GET', '/v2/api?' . http_build_query($params));
 
         return $this->client->sendRequest($request);
     }

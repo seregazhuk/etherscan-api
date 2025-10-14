@@ -11,8 +11,9 @@ use Http\Discovery\Psr18ClientDiscovery;
 use seregazhuk\EtherscanApi\Module\Accounts\Accounts;
 use seregazhuk\EtherscanApi\Module\Contracts\Contracts;
 use seregazhuk\EtherscanApi\Module\Proxy\Proxy;
+use seregazhuk\EtherscanApi\Module\Tokens\Tokens;
 
-class EtherscanApi
+final class EtherscanApi
 {
     private const API_URL = 'https://api.etherscan.io/v2/api';
 
@@ -20,13 +21,15 @@ class EtherscanApi
 
     public readonly Proxy $proxy;
 
-    public Contracts $contracts;
+    public readonly Contracts $contracts;
+
+    public readonly Tokens $tokens;
 
     public function __construct(string $apiKey, ChainId $chainId = ChainId::ETHEREUM_MAINNET)
     {
         $pluginClient = new PluginClient(
             Psr18ClientDiscovery::find(),
-            [new BaseUriPlugin(Psr17FactoryDiscovery::findUriFactory()->createUri(self::API_URL))]
+            [new BaseUriPlugin(Psr17FactoryDiscovery::findUriFactory()->createUri(self::API_URL))],
         );
 
         $etherscanClient = new EtherscanClient(
@@ -39,5 +42,6 @@ class EtherscanApi
         $this->accounts = new Accounts($etherscanClient);
         $this->proxy = new Proxy($etherscanClient);
         $this->contracts = new Contracts($etherscanClient);
+        $this->tokens = new Tokens($etherscanClient);
     }
 }

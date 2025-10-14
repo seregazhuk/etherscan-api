@@ -13,13 +13,13 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use seregazhuk\EtherscanApi\ChainId;
 use seregazhuk\EtherscanApi\EtherscanClient;
-use seregazhuk\EtherscanApi\Module\Accounts\Accounts;
+use seregazhuk\EtherscanApi\Module\Tokens\Tokens;
 
-final class AccountsTest extends TestCase
+final class TokensTest extends TestCase
 {
     private ClientInterface&MockObject $httpClientMock;
 
-    private Accounts $accounts;
+    private Tokens $tokens;
 
     protected function setUp(): void
     {
@@ -30,18 +30,18 @@ final class AccountsTest extends TestCase
             Psr17FactoryDiscovery::findRequestFactory(),
             ChainId::ETHEREUM_MAINNET,
         );
-        $this->accounts = new Accounts($client);
+        $this->tokens = new Tokens($client);
         parent::setUp();
     }
 
     #[Test]
-    public function it_retrieves_account_balance(): void
+    public function it_retrieves_address_balance(): void
     {
         $json = <<<'JSON'
             {
                "status":"1",
                "message":"OK",
-               "result":"40891626854930000000000" 
+               "result":"135499"
             }
         JSON;
 
@@ -49,46 +49,36 @@ final class AccountsTest extends TestCase
             ->expects($this->once())
             ->method('sendRequest')
             ->with($this->callback(function (RequestInterface $request): bool {
-                $this->assertSame('chainid=1&module=account&action=balance&apikey=apiKey&tag=latest&address=0xde0b295669a9fd93d5f28d9ec85e40f4cb697bae', $request->getUri()->getQuery());
+                $this->assertSame('chainid=1&module=account&action=tokenbalance&apikey=apiKey&address=0xe04f27eb70e025b78871a2ad7eabe85e61212761&contractaddress=0x57d90b64a1a57749b0f932f1a3395792e12e7055', $request->getUri()->getQuery());
 
                 return true;
             }))
             ->willReturn(new Response(200, [], $json));
-
-        $balance = $this->accounts->getBalance('0xde0b295669a9fd93d5f28d9ec85e40f4cb697bae');
-        $this->assertSame('40891626854930000000000', $balance);
+        $result = $this->tokens->getTokenBalance('0x57d90b64a1a57749b0f932f1a3395792e12e7055', '0xe04f27eb70e025b78871a2ad7eabe85e61212761');
+        $this->assertSame('135499', $result);
     }
 
     #[Test]
-    public function it_retrieves_accounts_balances(): void
+    public function it_retrieves_token_total_supply(): void
     {
         $json = <<<'JSON'
             {
-                "status": "1",
-                "message": "OK",
-                "result": [
-                    {
-                        "account": "0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a",
-                        "balance": "27000616846559600000999"
-                    },
-                    {
-                        "account": "0x63a9975ba31b0b9626b34300f7f627147df1f526",
-                        "balance": "2039670355000"
-                    }
-                ]
-            }           
+               "status":"1",
+               "message":"OK",
+               "result":"21265524714464"
+            }
         JSON;
 
         $this->httpClientMock
             ->expects($this->once())
             ->method('sendRequest')
             ->with($this->callback(function (RequestInterface $request): bool {
-                $this->assertSame('chainid=1&module=account&action=balancemulti&apikey=apiKey&address=0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a%2C0x63a9975ba31b0b9626b34300f7f627147df1f526&tag=latest', $request->getUri()->getQuery());
+                $this->assertSame('chainid=1&module=stats&action=tokensupply&apikey=apiKey&contractaddress=0x57d90b64a1a57749b0f932f1a3395792e12e7055', $request->getUri()->getQuery());
 
                 return true;
             }))
             ->willReturn(new Response(200, [], $json));
-
-        $balances = $this->accounts->getBalances(['0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a', '0x63a9975ba31b0b9626b34300f7f627147df1f526']);
+        $result = $this->tokens->getTotalSupply('0x57d90b64a1a57749b0f932f1a3395792e12e7055');
+        $this->assertSame('21265524714464', $result);
     }
 }

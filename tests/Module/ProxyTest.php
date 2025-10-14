@@ -15,7 +15,7 @@ use seregazhuk\EtherscanApi\ChainId;
 use seregazhuk\EtherscanApi\EtherscanClient;
 use seregazhuk\EtherscanApi\Module\Proxy\Proxy;
 
-class ProxyTest extends TestCase
+final class ProxyTest extends TestCase
 {
     private ClientInterface&MockObject $httpClientMock;
 
@@ -25,9 +25,10 @@ class ProxyTest extends TestCase
     {
         $this->httpClientMock = self::createMock(ClientInterface::class);
         $client = new EtherscanClient(
-            $this->httpClientMock, 'apiKey',
+            $this->httpClientMock,
+            'apiKey',
             Psr17FactoryDiscovery::findRequestFactory(),
-            ChainId::ETHEREUM_MAINNET
+            ChainId::ETHEREUM_MAINNET,
         );
         $this->proxy = new Proxy($client);
         parent::setUp();
@@ -69,7 +70,7 @@ class ProxyTest extends TestCase
         $this->httpClientMock
             ->expects($this->once())
             ->method('sendRequest')
-            ->with($this->callback(function (RequestInterface $request) {
+            ->with($this->callback(function (RequestInterface $request): bool {
                 $this->assertSame('chainid=1&module=proxy&action=eth_getTransactionByHash&apikey=apiKey&txhash=0x136f818dfe87b367eee9890c162ef343dbd65e409aef102219a6091ba7e696d7', $request->getUri()->getQuery());
 
                 return true;
@@ -90,6 +91,53 @@ class ProxyTest extends TestCase
         $this->assertSame('0x19755d4ce12c00', $transaction->value);
         $this->assertSame('0x2', $transaction->type);
         $this->assertSame('0x33b79d', $transaction->nonce);
+    }
 
+    #[Test]
+    public function it_retrieves_block_number(): void
+    {
+        $json = <<<'JSON'
+            {
+               "jsonrpc":"2.0",
+               "id":83,
+               "result":"0xc36b29"
+            }
+        JSON;
+
+        $this->httpClientMock
+            ->expects($this->once())
+            ->method('sendRequest')
+            ->with($this->callback(function (RequestInterface $request): bool {
+                $this->assertSame('chainid=1&module=proxy&action=eth_blockNumber&apikey=apiKey', $request->getUri()->getQuery());
+
+                return true;
+            }))
+            ->willReturn(new Response(200, [], $json));
+        $result = $this->proxy->getBlockNumber();
+        $this->assertSame('0xc36b29', $result);
+    }
+
+    #[Test]
+    public function it_submits_pre_signed_transaction_for_broadcast(): void
+    {
+        $json = <<<'JSON'
+            {             
+                "id":1,
+                "jsonrpc": "2.0",
+                "result": "0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331"
+            }
+        JSON;
+
+        $this->httpClientMock
+            ->expects($this->once())
+            ->method('sendRequest')
+            ->with($this->callback(function (RequestInterface $request): bool {
+                $this->assertSame('chainid=1&module=proxy&action=eth_sendRawTransaction&apikey=apiKey&hex=0xf904808000831cfde080', $request->getUri()->getQuery());
+
+                return true;
+            }))
+            ->willReturn(new Response(200, [], $json));
+        $result = $this->proxy->sendRawTransaction('0xf904808000831cfde080');
+        $this->assertSame('0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331', $result);
     }
 }

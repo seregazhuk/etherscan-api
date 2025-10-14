@@ -33,7 +33,7 @@ final class Contracts
         $response = $this->client->sendRequest(self::MODULE_NAME, 'getsourcecode', ['address' => $address]);
         $json = json_decode($response->getBody()->getContents(), true);
 
-        return array_map(fn (array $raw) => new ContractSourceCode(
+        return array_map(fn(array $raw): \seregazhuk\EtherscanApi\Module\Contracts\ContractSourceCode => new ContractSourceCode(
             $raw['SourceCode'],
             $raw['ABI'],
             $raw['ContractName'],
