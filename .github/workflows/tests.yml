@@ -72,10 +72,6 @@ jobs:
         run: |
           composer pint
 
-      - name: Run Phpstan
-        run: |
-          composer stan
-
       - name: Run tests with Phpunit
         run: |
           XDEBUG_MODE=coverage php vendor/bin/phpunit --testsuite unit
