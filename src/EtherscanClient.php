@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace seregazhuk\EtherscanApi\Module;
+namespace seregazhuk\EtherscanApi;
 
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use seregazhuk\EtherscanApi\ChainId;
 
 class EtherscanClient
 {

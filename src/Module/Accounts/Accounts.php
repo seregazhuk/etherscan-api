@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace seregazhuk\EtherscanApi\Module\Accounts;
 
-use seregazhuk\EtherscanApi\Module\EtherscanClient;
+use seregazhuk\EtherscanApi\EtherscanClient;
 
-class Accounts
+final class Accounts
 {
     private const MODULE_NAME = 'account';
 
-    public function __construct(
-        private readonly EtherscanClient $client
-    ) {}
+    public function __construct(private readonly EtherscanClient $client) {}
 
     /**
      * @see https://docs.etherscan.io/api-endpoints/accounts#get-ether-balance-for-a-single-address
@@ -31,7 +29,7 @@ class Accounts
     }
 
     /**
-     * @see https://docs.etherscan.io/api-endpoints/accounts#get-ether-balance-for-a-single-address
+     * @see https://docs.etherscan.io/api-endpoints/contracts#get-contract-abi-for-verified-contract-source-codes
      *
      * @param string[] $addresses
      * @return Balance[]

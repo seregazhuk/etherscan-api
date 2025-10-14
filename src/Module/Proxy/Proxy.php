@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace seregazhuk\EtherscanApi\Module\Proxy;
 
-use seregazhuk\EtherscanApi\Module\EtherscanClient;
+use seregazhuk\EtherscanApi\EtherscanClient;
 
-class Proxy
+final class Proxy
 {
     private const MODULE_NAME = 'proxy';
 

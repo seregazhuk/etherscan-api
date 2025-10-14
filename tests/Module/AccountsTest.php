@@ -12,8 +12,8 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use seregazhuk\EtherscanApi\ChainId;
+use seregazhuk\EtherscanApi\EtherscanClient;
 use seregazhuk\EtherscanApi\Module\Accounts\Accounts;
-use seregazhuk\EtherscanApi\Module\EtherscanClient;
 
 class AccountsTest extends TestCase
 {

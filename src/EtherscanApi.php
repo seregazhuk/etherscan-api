@@ -9,7 +9,7 @@ use Http\Client\Common\PluginClient;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 use seregazhuk\EtherscanApi\Module\Accounts\Accounts;
-use seregazhuk\EtherscanApi\Module\EtherscanClient;
+use seregazhuk\EtherscanApi\Module\Contracts\Contracts;
 use seregazhuk\EtherscanApi\Module\Proxy\Proxy;
 
 class EtherscanApi
@@ -19,6 +19,8 @@ class EtherscanApi
     public readonly Accounts $accounts;
 
     public readonly Proxy $proxy;
+
+    public Contracts $contracts;
 
     public function __construct(string $apiKey, ChainId $chainId = ChainId::ETHEREUM_MAINNET)
     {
@@ -36,5 +38,6 @@ class EtherscanApi
 
         $this->accounts = new Accounts($etherscanClient);
         $this->proxy = new Proxy($etherscanClient);
+        $this->contracts = new Contracts($etherscanClient);
     }
 }

@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use seregazhuk\EtherscanApi\ChainId;
-use seregazhuk\EtherscanApi\Module\EtherscanClient;
+use seregazhuk\EtherscanApi\EtherscanClient;
 use seregazhuk\EtherscanApi\Module\Proxy\Proxy;
 
 class ProxyTest extends TestCase
