@@ -19,58 +19,41 @@ on:
 
 jobs:
   tests:
-    name: PHP ${{ matrix.php }}-${{ matrix.os }}
+    name: Tests (PHP ${{ matrix.php }}, OS ${{ matrix.os }})
 
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os:
-          - ubuntu-latest
-
-        php:
-          - 8.1
-          - 8.2
-          - 8.3
-          - 8.4
+        os: [ubuntu-latest]
+        php: [8.1, 8.2, 8.3, 8.4]
 
     env:
       extensions: xdebug
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Check Out Code
+        uses: actions/checkout@v4
 
-      - name: Install PHP
+      - name: Setup PHP ${{ matrix.php }}
         uses: shivammathur/setup-php@v2
-        env:
-          update: true
         with:
           php-version: ${{ matrix.php }}
-          extensions: ${{ env.extensions }}
-          tools: composer:v2
+          extensions: dom, sockets, grpc, curl ${{ matrix.extensions-suffix }}
 
-      - name: Setup composer cache directory
-        if: matrix.os == 'ubuntu-latest'
-        run: echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_ENV
-
-      - name: Cache dependencies installed with composer
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.COMPOSER_CACHE_DIR }}
-          key: php${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: |
-            php${{ matrix.php }}-composer-
-
-      - name: Update composer
-        run: composer self-update
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
 
       - name: Install dependencies with composer
-        run: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi
+        uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
 
-      - name: Run Pint
-        run: |
-          composer pint
+      - name: Validate lowest dependencies
+        if: matrix.dependencies == 'lowest' && matrix.php == '8.1'
+        env:
+          COMPOSER_POOL_OPTIMIZER: 0
+        run: vendor/bin/validate-prefer-lowest
 
       - name: Run tests with Phpunit
         run: |

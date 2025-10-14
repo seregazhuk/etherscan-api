@@ -18,8 +18,8 @@ on:
       - 'README.md'
 
 jobs:
-  tests:
-    name: PHP ${{ matrix.php }}-${{ matrix.os }}
+  phpstan:
+    name: Static analysis (PHP ${{ matrix.php }}, OS ${{ matrix.os }})
 
     runs-on: ${{ matrix.os }}
 
