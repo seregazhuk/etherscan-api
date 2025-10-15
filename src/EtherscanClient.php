@@ -18,7 +18,7 @@ final class EtherscanClient
     ) {}
 
     /**
-     * @param array<string, string> $params
+     * @param array<string, mixed> $params
      */
     public function sendRequest(string $module, string $action, array $params = []): ResponseInterface
     {

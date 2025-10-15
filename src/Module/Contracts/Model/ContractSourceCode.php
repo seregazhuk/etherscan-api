@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace seregazhuk\EtherscanApi\Module\Contracts;
+namespace seregazhuk\EtherscanApi\Module\Contracts\Model;
 
 final class ContractSourceCode
 {
