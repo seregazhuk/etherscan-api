@@ -17,6 +17,5 @@ final class TransactionReceiptLog
         public readonly string $logIndex,
         public readonly string $blockHash,
         public readonly bool $removed,
-    ) {
-    }
+    ) {}
 }

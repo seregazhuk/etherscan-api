@@ -30,6 +30,5 @@ final class BlockInfo
         public readonly string $transactionsRoot,
         /** @var array<string> $uncles */
         public readonly array $uncles,
-    ) {
-    }
+    ) {}
 }

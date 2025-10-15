@@ -155,7 +155,7 @@ final class Proxy
         /** @var array{result: string} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
-        return (int)hexdec($json['result']);
+        return (int) hexdec($json['result']);
     }
 
     /**
@@ -167,7 +167,7 @@ final class Proxy
         /** @var array{result: string} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
-        return (int)hexdec($json['result']);
+        return (int) hexdec($json['result']);
     }
 
     /**
@@ -200,7 +200,7 @@ final class Proxy
          *     transactionHash: string,
          *     transactionIndex: string,
          *     type: string
-        }} $json */
+         * }} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
         return new TransactionReceipt(
@@ -239,6 +239,6 @@ final class Proxy
         /** @var array{result: string} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
-        return (string)hexdec($json['result']);
+        return (string) hexdec($json['result']);
     }
 }

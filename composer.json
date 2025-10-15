@@ -45,7 +45,8 @@
         "checks": [
             "@test",
             "@rector",
-            "@stan"
+            "@stan",
+            "@pint-fix"
         ]
     },
     "prefer-stable": true,
