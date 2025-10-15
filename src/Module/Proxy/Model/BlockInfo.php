@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace seregazhuk\EtherscanApi\Module\Proxy;
+namespace seregazhuk\EtherscanApi\Module\Proxy\Model;
 
 final class BlockInfo
 {

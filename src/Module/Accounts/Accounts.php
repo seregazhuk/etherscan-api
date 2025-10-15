@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace seregazhuk\EtherscanApi\Module\Accounts;
 
 use seregazhuk\EtherscanApi\EtherscanClient;
+use seregazhuk\EtherscanApi\Module\Accounts\Model\AccountBalanceTag;
+use seregazhuk\EtherscanApi\Module\Accounts\Model\Balance;
 
 final class Accounts
 {

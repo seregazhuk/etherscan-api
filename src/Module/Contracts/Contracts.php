@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace seregazhuk\EtherscanApi\Module\Contracts;
 
 use seregazhuk\EtherscanApi\EtherscanClient;
+use seregazhuk\EtherscanApi\Module\Contracts\Model\ContractSourceCode;
 
 final class Contracts
 {

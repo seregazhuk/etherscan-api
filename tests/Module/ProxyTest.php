@@ -70,14 +70,24 @@ final class ProxyTest extends TestCase
         $this->httpClientMock
             ->expects($this->once())
             ->method('sendRequest')
-            ->with($this->callback(function (RequestInterface $request): bool {
-                $this->assertSame('chainid=1&module=proxy&action=eth_getTransactionByHash&apikey=apiKey&txhash=0x136f818dfe87b367eee9890c162ef343dbd65e409aef102219a6091ba7e696d7', $request->getUri()->getQuery());
+            ->with(
+                $this->callback(function (RequestInterface $request): bool {
+                    $this->assertSame(
+                        'chainid=1&module=proxy&action=eth_getTransactionByHash&apikey=apiKey&txhash=0x136f818dfe87b367eee9890c162ef343dbd65e409aef102219a6091ba7e696d7',
+                        $request->getUri()->getQuery()
+                    );
 
-                return true;
-            }))
+                    return true;
+                })
+            )
             ->willReturn(new Response(200, [], $json));
-        $transaction = $this->proxy->getTransactionByHash('0x136f818dfe87b367eee9890c162ef343dbd65e409aef102219a6091ba7e696d7');
-        $this->assertSame('0xf850331061196b8f2b67e1f43aaa9e69504c059d3d3fb9547b04f9ed4d141ab7', $transaction->blockHash);
+        $transaction = $this->proxy->getTransactionByHash(
+            '0x136f818dfe87b367eee9890c162ef343dbd65e409aef102219a6091ba7e696d7'
+        );
+        $this->assertSame(
+            '0xf850331061196b8f2b67e1f43aaa9e69504c059d3d3fb9547b04f9ed4d141ab7',
+            $transaction->blockHash
+        );
         $this->assertSame('0xcf2420', $transaction->blockNumber);
         $this->assertSame('0x00192fb10df37c9fb26829eb2cc623cd1bf599e8', $transaction->from);
         $this->assertSame('0x5208', $transaction->gas);
@@ -107,11 +117,16 @@ final class ProxyTest extends TestCase
         $this->httpClientMock
             ->expects($this->once())
             ->method('sendRequest')
-            ->with($this->callback(function (RequestInterface $request): bool {
-                $this->assertSame('chainid=1&module=proxy&action=eth_blockNumber&apikey=apiKey', $request->getUri()->getQuery());
+            ->with(
+                $this->callback(function (RequestInterface $request): bool {
+                    $this->assertSame(
+                        'chainid=1&module=proxy&action=eth_blockNumber&apikey=apiKey',
+                        $request->getUri()->getQuery()
+                    );
 
-                return true;
-            }))
+                    return true;
+                })
+            )
             ->willReturn(new Response(200, [], $json));
         $result = $this->proxy->getBlockNumber();
         $this->assertSame('0xc36b29', $result);
@@ -131,11 +146,16 @@ final class ProxyTest extends TestCase
         $this->httpClientMock
             ->expects($this->once())
             ->method('sendRequest')
-            ->with($this->callback(function (RequestInterface $request): bool {
-                $this->assertSame('chainid=1&module=proxy&action=eth_sendRawTransaction&apikey=apiKey&hex=0xf904808000831cfde080', $request->getUri()->getQuery());
+            ->with(
+                $this->callback(function (RequestInterface $request): bool {
+                    $this->assertSame(
+                        'chainid=1&module=proxy&action=eth_sendRawTransaction&apikey=apiKey&hex=0xf904808000831cfde080',
+                        $request->getUri()->getQuery()
+                    );
 
-                return true;
-            }))
+                    return true;
+                })
+            )
             ->willReturn(new Response(200, [], $json));
         $result = $this->proxy->sendRawTransaction('0xf904808000831cfde080');
         $this->assertSame('0xe670ec64341771606e55d6b4ca35a1a6b75ee3d5145a99d05921026d1527331', $result);
@@ -182,11 +202,16 @@ final class ProxyTest extends TestCase
         $this->httpClientMock
             ->expects($this->once())
             ->method('sendRequest')
-            ->with($this->callback(function (RequestInterface $request): bool {
-                $this->assertSame('chainid=1&module=proxy&action=eth_getBlockByNumber&apikey=apiKey&tag=0x10d4f&boolean=0', $request->getUri()->getQuery());
+            ->with(
+                $this->callback(function (RequestInterface $request): bool {
+                    $this->assertSame(
+                        'chainid=1&module=proxy&action=eth_getBlockByNumber&apikey=apiKey&tag=0x10d4f&boolean=0',
+                        $request->getUri()->getQuery()
+                    );
 
-                return true;
-            }))
+                    return true;
+                })
+            )
             ->willReturn(new Response(200, [], $json));
 
         $result = $this->proxy->getBlockByNumber('0x10d4f');
@@ -196,7 +221,10 @@ final class ProxyTest extends TestCase
         $this->assertSame('0x1caa87b', $result->gasLimit);
         $this->assertSame('0x5f036a', $result->gasUsed);
         $this->assertSame('0x396288e0ad6690159d56b5502a172d54baea649698b4d7af2393cf5d98bf1bb3', $result->hash);
-        $this->assertSame('0x5020418e211832c600000411c00098852850124700800500580d406984009104010420410c00420080414b044000012202448082084560844400d00002202b1209122000812091288804302910a246e25380282000e00002c00050009038cc205a018180028225218760100040820ac12302840050180448420420b000080000410448288400e0a2c2402050004024a240200415016c105844214060005009820302001420402003200452808508401014690208808409000033264a1b0d200c1200020280000cc0220090a8000801c00b0100a1040a8110420111870000250a22dc210a1a2002409c54140800c9804304b408053112804062088bd700900120', $result->logsBloom);
+        $this->assertSame(
+            '0x5020418e211832c600000411c00098852850124700800500580d406984009104010420410c00420080414b044000012202448082084560844400d00002202b1209122000812091288804302910a246e25380282000e00002c00050009038cc205a018180028225218760100040820ac12302840050180448420420b000080000410448288400e0a2c2402050004024a240200415016c105844214060005009820302001420402003200452808508401014690208808409000033264a1b0d200c1200020280000cc0220090a8000801c00b0100a1040a8110420111870000250a22dc210a1a2002409c54140800c9804304b408053112804062088bd700900120',
+            $result->logsBloom
+        );
         $this->assertSame('0x5a0b54d5dc17e0aadc383d2db43b0a0d3e029c4c', $result->miner);
         $this->assertSame('0xc547c797fb85c788ecfd4f5d24651bddf15805acbaad2c74b96b0b2a2317e66c', $result->mixHash);
         $this->assertSame('0x04a99df972bd8412', $result->nonce);
@@ -208,10 +236,19 @@ final class ProxyTest extends TestCase
         $this->assertSame('0x60fdb78b92f0e621049e0aed52957971e226a11337f633856d8b953a56399510', $result->stateRoot);
         $this->assertSame('0x6110bab2', $result->timestamp);
         $this->assertSame('0x612789b0aba90e580f8', $result->totalDifficulty);
-        $this->assertSame('0x40330c87750aa1ba1908a787b9a42d0828e53d73100ef61ae8a4d925329587b5', $result->transactions[0]);
-        $this->assertSame('0x6fa2208790f1154b81fc805dd7565679d8a8cc26112812ba1767e1af44c35dd4', $result->transactions[1]);;
+        $this->assertSame(
+            '0x40330c87750aa1ba1908a787b9a42d0828e53d73100ef61ae8a4d925329587b5',
+            $result->transactions[0]
+        );
+        $this->assertSame(
+            '0x6fa2208790f1154b81fc805dd7565679d8a8cc26112812ba1767e1af44c35dd4',
+            $result->transactions[1]
+        );;
         $this->assertSame('0x9e8622c7bf742bdeaf96c700c07151c1203edaf17a38ea8315b658c2e6d873cd', $result->uncles[0]);
-        $this->assertSame('0xaceb14fcf363e67d6cdcec0d7808091b764b4428f5fd7e25fb18d222898ef779', $result->transactionsRoot);
+        $this->assertSame(
+            '0xaceb14fcf363e67d6cdcec0d7808091b764b4428f5fd7e25fb18d222898ef779',
+            $result->transactionsRoot
+        );
     }
 
     #[Test]
@@ -228,11 +265,16 @@ final class ProxyTest extends TestCase
         $this->httpClientMock
             ->expects($this->once())
             ->method('sendRequest')
-            ->with($this->callback(function (RequestInterface $request): bool {
-                $this->assertSame('chainid=1&module=proxy&action=eth_getBlockTransactionCountByNumber&apikey=apiKey&tag=0x10FB78', $request->getUri()->getQuery());
+            ->with(
+                $this->callback(function (RequestInterface $request): bool {
+                    $this->assertSame(
+                        'chainid=1&module=proxy&action=eth_getBlockTransactionCountByNumber&apikey=apiKey&tag=0x10FB78',
+                        $request->getUri()->getQuery()
+                    );
 
-                return true;
-            }))
+                    return true;
+                })
+            )
             ->willReturn(new Response(200, [], $json));
         $result = $this->proxy->getTransactionCountByNumber('0x10FB78');
         $this->assertSame(3, $result);
@@ -330,23 +372,73 @@ final class ProxyTest extends TestCase
         $this->assertSame('0x292f04a44506c2fd49bac032e1ca148c35a478c8', $result->from);
         $this->assertSame('0xb41d', $result->gasUsed);
         $this->assertSame('0xdac17f958d2ee523a2206206994597c13d831ec7', $result->logs[0]->address);
-        $this->assertSame('0x00000000000000000000000000000000000000000000000000000000000004000000000004000000000000000000010000000000000000000000000000000000000000000000000000000008000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000010000000001100000000000000000000000000000000000000000000000000000200100000000000000000000000000080000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000', $result->logsBloom);
+        $this->assertSame(
+            '0x00000000000000000000000000000000000000000000000000000000000004000000000004000000000000000000010000000000000000000000000000000000000000000000000000000008000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000010000000001100000000000000000000000000000000000000000000000000000200100000000000000000000000000080000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+            $result->logsBloom
+        );
         $this->assertSame('0x1', $result->status);
         $this->assertSame('0xdac17f958d2ee523a2206206994597c13d831ec7', $result->to);
-        $this->assertSame('0xadb8aec59e80db99811ac4a0235efa3e45da32928bcff557998552250fa672eb', $result->transactionHash);
+        $this->assertSame(
+            '0xadb8aec59e80db99811ac4a0235efa3e45da32928bcff557998552250fa672eb',
+            $result->transactionHash
+        );
         $this->assertSame('0x122', $result->transactionIndex);
         $this->assertSame('0x2', $result->type);
 
         // Logs
         $this->assertSame('0x00000000000000000000000000000000000000000000000000000000013f81a6', $result->logs[0]->data);
         $this->assertSame('0xcf2427', $result->logs[0]->blockNumber);
-        $this->assertSame('0xadb8aec59e80db99811ac4a0235efa3e45da32928bcff557998552250fa672eb', $result->logs[0]->transactionHash);
+        $this->assertSame(
+            '0xadb8aec59e80db99811ac4a0235efa3e45da32928bcff557998552250fa672eb',
+            $result->logs[0]->transactionHash
+        );
         $this->assertSame('0x122', $result->logs[0]->transactionIndex);
-        $this->assertSame('0x07c17710dbb7514e92341c9f83b4aab700c5dba7c4fb98caadd7926a32e47799', $result->logs[0]->blockHash);
+        $this->assertSame(
+            '0x07c17710dbb7514e92341c9f83b4aab700c5dba7c4fb98caadd7926a32e47799',
+            $result->logs[0]->blockHash
+        );
         $this->assertSame('0xdb', $result->logs[0]->logIndex);
         $this->assertFalse($result->logs[0]->removed);
-        $this->assertSame('0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef', $result->logs[0]->topics[0]);
-        $this->assertSame('0x000000000000000000000000292f04a44506c2fd49bac032e1ca148c35a478c8', $result->logs[0]->topics[1]);
-        $this->assertSame('0x000000000000000000000000ab6960a6511ff18ed8b8c012cb91c7f637947fc0', $result->logs[0]->topics[2]);
+        $this->assertSame(
+            '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef',
+            $result->logs[0]->topics[0]
+        );
+        $this->assertSame(
+            '0x000000000000000000000000292f04a44506c2fd49bac032e1ca148c35a478c8',
+            $result->logs[0]->topics[1]
+        );
+        $this->assertSame(
+            '0x000000000000000000000000ab6960a6511ff18ed8b8c012cb91c7f637947fc0',
+            $result->logs[0]->topics[2]
+        );
+    }
+
+    #[Test]
+    public function it_retrieves_gas_price(): void
+    {
+        $json = <<<'JSON'
+            {             
+                "id":1,
+                "jsonrpc": "2.0",
+                "result": "0x430e23400"
+            }
+        JSON;
+
+        $this->httpClientMock
+            ->expects($this->once())
+            ->method('sendRequest')
+            ->with(
+                $this->callback(function (RequestInterface $request): bool {
+                    $this->assertSame(
+                        'chainid=1&module=proxy&action=eth_gasPrice&apikey=apiKey',
+                        $request->getUri()->getQuery()
+                    );
+
+                    return true;
+                })
+            )
+            ->willReturn(new Response(200, [], $json));
+        $result = $this->proxy->getGasPrice();
+        $this->assertSame('18000000000', $result);
     }
 }

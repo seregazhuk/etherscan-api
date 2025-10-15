@@ -14,7 +14,7 @@ use Psr\Http\Message\RequestInterface;
 use seregazhuk\EtherscanApi\ChainId;
 use seregazhuk\EtherscanApi\EtherscanClient;
 use seregazhuk\EtherscanApi\Module\Contracts\Contracts;
-use seregazhuk\EtherscanApi\Module\Contracts\ContractSourceCode;
+use seregazhuk\EtherscanApi\Module\Contracts\Model\ContractSourceCode;
 
 final class ContractsTest extends TestCase
 {

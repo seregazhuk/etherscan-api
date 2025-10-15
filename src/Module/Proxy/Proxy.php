@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace seregazhuk\EtherscanApi\Module\Proxy;
 
 use seregazhuk\EtherscanApi\EtherscanClient;
+use seregazhuk\EtherscanApi\Module\Proxy\Model\BlockInfo;
+use seregazhuk\EtherscanApi\Module\Proxy\Model\TransactionByHashInfo;
+use seregazhuk\EtherscanApi\Module\Proxy\Model\TransactionReceipt;
+use seregazhuk\EtherscanApi\Module\Proxy\Model\TransactionReceiptLog;
 
 final class Proxy
 {
@@ -224,5 +228,17 @@ final class Proxy
             $json['result']['transactionIndex'],
             $json['result']['type'],
         );
+    }
+
+    /**
+     * @see https://docs.etherscan.io/api-endpoints/geth-parity-proxy#eth_gasprice
+     */
+    public function getGasPrice(): string
+    {
+        $response = $this->client->sendRequest(self::MODULE_NAME, 'eth_gasPrice');
+        /** @var array{result: string} $json */
+        $json = json_decode($response->getBody()->getContents(), true);
+
+        return (string)hexdec($json['result']);
     }
 }

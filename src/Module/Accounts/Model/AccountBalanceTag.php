@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace seregazhuk\EtherscanApi\Module\Accounts;
+namespace seregazhuk\EtherscanApi\Module\Accounts\Model;
 
 enum AccountBalanceTag: string
 {
