@@ -45,7 +45,6 @@
         "checks": [
             "@test",
             "@rector",
-            "@pint-fixp",
             "@stan"
         ]
     },
