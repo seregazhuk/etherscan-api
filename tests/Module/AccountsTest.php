@@ -6,6 +6,7 @@ namespace Module;
 
 use GuzzleHttp\Psr7\Response;
 use Http\Discovery\Psr17FactoryDiscovery;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -191,5 +192,219 @@ final class AccountsTest extends TestCase
         $this->assertSame('14923692', $transactions[1]->blockNumber);
         $this->assertSame('0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338', $transactions[1]->hash);
         $this->assertSame('transfer(address _to, uint256 _value)', $transactions[1]->functionName);
+    }
+
+    #[Test]
+    public function it_retrieves_transaction_internal_transactions_by_hash(): void
+    {
+        $json = <<<'JSON'
+            {
+               "status":"1",
+               "message":"OK",
+               "result":[
+                  {
+                     "blockNumber":"1743059",
+                     "timeStamp":"1466489498",
+                     "from":"0x2cac6e4b11d6b58f6d3c1c9d5fe8faa89f60e5a2",
+                     "to":"0x66a1c3eaf0f1ffc28d209c0763ed0ca614f3b002",
+                     "value":"7106740000000000",
+                     "contractAddress":"",
+                     "input":"",
+                     "type":"call",
+                     "gas":"2300",
+                     "gasUsed":"0",
+                     "isError":"0",
+                     "errCode":""
+                  }
+               ]
+            }
+        JSON;
+
+        $this->httpClientMock
+            ->expects($this->once())
+            ->method('sendRequest')
+            ->with($this->callback(function (RequestInterface $request): bool {
+                $this->assertSame('chainid=1&module=account&action=txlistinternal&apikey=apiKey&txhash=0x40eb908387324f2b575b4879cd9d7188f69c8fc9d87c901b9e2daaea4b442170&page=1&offset=10&sort=asc', $request->getUri()->getQuery());
+
+                return true;
+            }))
+            ->willReturn(new Response(200, [], $json));
+
+        $transactions = $this->accounts->getInternalTransactionsByHash('0x40eb908387324f2b575b4879cd9d7188f69c8fc9d87c901b9e2daaea4b442170');
+        $this->assertCount(1, $transactions);
+
+        $this->assertSame('1743059', $transactions[0]->blockNumber);
+        $this->assertSame('1466489498', $transactions[0]->timeStamp);
+        $this->assertSame('0x2cac6e4b11d6b58f6d3c1c9d5fe8faa89f60e5a2', $transactions[0]->from);
+        $this->assertSame('0x66a1c3eaf0f1ffc28d209c0763ed0ca614f3b002', $transactions[0]->to);
+        $this->assertSame('7106740000000000', $transactions[0]->value);
+        $this->assertSame('', $transactions[0]->contractAddress);
+        $this->assertSame('', $transactions[0]->input);
+        $this->assertSame('call', $transactions[0]->type);
+        $this->assertSame('2300', $transactions[0]->gas);
+        $this->assertSame('0', $transactions[0]->gasUsed);
+        $this->assertSame('0', $transactions[0]->isError);
+        $this->assertSame('', $transactions[0]->errCode);
+    }
+
+    #[Test]
+    public function it_retrieves_transaction_internal_transactions_by_block_range(): void
+    {
+        $json = <<<'JSON'
+            {
+               "status":"1",
+               "message":"OK",
+               "result":[
+                  {
+                     "blockNumber":"1743059",
+                     "timeStamp":"1466489498",
+                     "from":"0x2cac6e4b11d6b58f6d3c1c9d5fe8faa89f60e5a2",
+                     "to":"0x66a1c3eaf0f1ffc28d209c0763ed0ca614f3b002",
+                     "value":"7106740000000000",
+                     "contractAddress":"",
+                     "input":"",
+                     "type":"call",
+                     "gas":"2300",
+                     "gasUsed":"0",
+                     "isError":"0",
+                     "errCode":""
+                  }
+               ]
+            }
+        JSON;
+
+        $this->httpClientMock
+            ->expects($this->once())
+            ->method('sendRequest')
+            ->with($this->callback(function (RequestInterface $request): bool {
+                $this->assertSame('chainid=1&module=account&action=txlistinternal&apikey=apiKey&startblock=13481773&endblock=13491773&page=1&offset=10&sort=asc', $request->getUri()->getQuery());
+
+                return true;
+            }))
+            ->willReturn(new Response(200, [], $json));
+
+        $transactions = $this->accounts->getInternalTransactionsByBlockRange(13481773, 13491773);
+        $this->assertCount(1, $transactions);
+
+        $this->assertSame('1743059', $transactions[0]->blockNumber);
+        $this->assertSame('1466489498', $transactions[0]->timeStamp);
+        $this->assertSame('0x2cac6e4b11d6b58f6d3c1c9d5fe8faa89f60e5a2', $transactions[0]->from);
+        $this->assertSame('0x66a1c3eaf0f1ffc28d209c0763ed0ca614f3b002', $transactions[0]->to);
+        $this->assertSame('7106740000000000', $transactions[0]->value);
+        $this->assertSame('', $transactions[0]->contractAddress);
+        $this->assertSame('', $transactions[0]->input);
+        $this->assertSame('call', $transactions[0]->type);
+        $this->assertSame('2300', $transactions[0]->gas);
+        $this->assertSame('0', $transactions[0]->gasUsed);
+        $this->assertSame('0', $transactions[0]->isError);
+        $this->assertSame('', $transactions[0]->errCode);
+    }
+
+    #[Test]
+    public function it_retrieves_erc20_events(): void
+    {
+        $json = <<<'JSON'
+            {
+               "status":"1",
+               "message":"OK",
+               "result":[
+                  {
+                     "blockNumber":"4730207",
+                     "timeStamp":"1513240363",
+                     "hash":"0xe8c208398bd5ae8e4c237658580db56a2a94dfa0ca382c99b776fa6e7d31d5b4",
+                     "nonce":"406",
+                     "blockHash":"0x022c5e6a3d2487a8ccf8946a2ffb74938bf8e5c8a3f6d91b41c56378a96b5c37",
+                     "from":"0x642ae78fafbb8032da552d619ad43f1d81e4dd7c",
+                     "contractAddress":"0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
+                     "to":"0x4e83362442b8d1bec281594cea3050c8eb01311c",
+                     "value":"5901522149285533025181",
+                     "tokenName":"Maker",
+                     "tokenSymbol":"MKR",
+                     "tokenDecimal":"18",
+                     "transactionIndex":"81",
+                     "gas":"940000",
+                     "gasPrice":"32010000000",
+                     "gasUsed":"77759",
+                     "cumulativeGasUsed":"2523379",
+                     "input":"deprecated",
+                     "confirmations":"7968350"
+                  },
+                  {
+                     "blockNumber":"4764973",
+                     "timeStamp":"1513764636",
+                     "hash":"0x9c82e89b7f6a4405d11c361adb6d808d27bcd9db3b04b3fb3bc05d182bbc5d6f",
+                     "nonce":"428",
+                     "blockHash":"0x87a4d04a6d8fce7a149e9dc528b88dc0c781a87456910c42984bdc15930a2cac",
+                     "from":"0x4e83362442b8d1bec281594cea3050c8eb01311c",
+                     "contractAddress":"0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
+                     "to":"0x69076e44a9c70a67d5b79d95795aba299083c275",
+                     "value":"132520488141080",
+                     "tokenName":"Maker",
+                     "tokenSymbol":"MKR",
+                     "tokenDecimal":"18",
+                     "transactionIndex":"167",
+                     "gas":"940000",
+                     "gasPrice":"35828000000",
+                     "gasUsed":"127593",
+                     "cumulativeGasUsed":"6315818",
+                     "input":"deprecated",
+                     "confirmations":"7933584"
+                  }
+               ]
+            }
+        JSON;
+
+        $this->httpClientMock
+            ->expects($this->once())
+            ->method('sendRequest')
+            ->with($this->callback(function (RequestInterface $request): bool {
+                $this->assertSame('chainid=1&module=account&action=tokentx&apikey=apiKey&page=1&offset=100&sort=asc&address=0x4e83362442b8d1bec281594cea3050c8eb01311c&contractaddress=0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2', $request->getUri()->getQuery());
+
+                return true;
+            }))
+            ->willReturn(new Response(200, [], $json));
+
+        $erc20Events = $this->accounts->getErc20TokenTransferEvents('0x4e83362442b8d1bec281594cea3050c8eb01311c', '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2');
+        $this->assertCount(2, $erc20Events);
+
+        $this->assertSame('4730207', $erc20Events[0]->blockNumber);
+        $this->assertSame('1513240363', $erc20Events[0]->timeStamp);
+        $this->assertSame('0x642ae78fafbb8032da552d619ad43f1d81e4dd7c', $erc20Events[0]->from);
+        $this->assertSame('0x4e83362442b8d1bec281594cea3050c8eb01311c', $erc20Events[0]->to);
+        $this->assertSame('5901522149285533025181', $erc20Events[0]->value);
+        $this->assertSame('Maker', $erc20Events[0]->tokenName);
+        $this->assertSame('MKR', $erc20Events[0]->tokenSymbol);
+        $this->assertSame('18', $erc20Events[0]->tokenDecimal);
+        $this->assertSame('81', $erc20Events[0]->transactionIndex);
+        $this->assertSame('940000', $erc20Events[0]->gas);
+        $this->assertSame('32010000000', $erc20Events[0]->gasPrice);
+        $this->assertSame('77759', $erc20Events[0]->gasUsed);
+        $this->assertSame('2523379', $erc20Events[0]->cumulativeGasUsed);
+        $this->assertSame('deprecated', $erc20Events[0]->input);
+        $this->assertSame('7968350', $erc20Events[0]->confirmations);
+
+        $this->assertSame('4764973', $erc20Events[1]->blockNumber);
+        $this->assertSame('1513764636', $erc20Events[1]->timeStamp);
+        $this->assertSame('0x4e83362442b8d1bec281594cea3050c8eb01311c', $erc20Events[1]->from);
+        $this->assertSame('0x69076e44a9c70a67d5b79d95795aba299083c275', $erc20Events[1]->to);
+        $this->assertSame('132520488141080', $erc20Events[1]->value);
+        $this->assertSame('Maker', $erc20Events[1]->tokenName);
+        $this->assertSame('MKR', $erc20Events[1]->tokenSymbol);
+        $this->assertSame('18', $erc20Events[1]->tokenDecimal);
+        $this->assertSame('167', $erc20Events[1]->transactionIndex);
+        $this->assertSame('940000', $erc20Events[1]->gas);
+        $this->assertSame('35828000000', $erc20Events[1]->gasPrice);
+        $this->assertSame('127593', $erc20Events[1]->gasUsed);
+        $this->assertSame('6315818', $erc20Events[1]->cumulativeGasUsed);
+        $this->assertSame('deprecated', $erc20Events[1]->input);
+        $this->assertSame('7933584', $erc20Events[1]->confirmations);
+    }
+
+    #[Test]
+    public function either_address_or_contract_address_must_be_provided_to_retrieve_erc20_events(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Either address or contract address must be provided');
+        $this->accounts->getErc20TokenTransferEvents();
     }
 }

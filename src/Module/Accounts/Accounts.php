@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace seregazhuk\EtherscanApi\Module\Accounts;
 
+use InvalidArgumentException;
 use seregazhuk\EtherscanApi\EtherscanClient;
 use seregazhuk\EtherscanApi\Module\Accounts\Model\AccountBalanceTag;
 use seregazhuk\EtherscanApi\Module\Accounts\Model\Balance;
+use seregazhuk\EtherscanApi\Module\Accounts\Model\Erc20Event;
+use seregazhuk\EtherscanApi\Module\Accounts\Model\InternalTransaction;
 use seregazhuk\EtherscanApi\Module\Accounts\Model\NormalTransaction;
 
 final class Accounts
@@ -113,6 +116,168 @@ final class Accounts
             $tx['confirmations'],
             $tx['methodId'],
             $tx['functionName'],
+        ), $json['result']);
+    }
+
+    /**
+     * @see https://docs.etherscan.io/api-endpoints/accounts#get-a-list-of-internal-transactions-by-address
+     * @return InternalTransaction[]
+     */
+    public function getInternalTransactionsByHash(string $hash, int $page = 1, int $offset = 10): array
+    {
+        $params = [
+            'txhash' => $hash,
+            'page' => $page,
+            'offset' => $offset,
+            'sort' => 'asc',
+        ];
+        $response = $this->client->sendRequest(self::MODULE_NAME, 'txlistinternal', $params);
+
+        /** @var array{result: array<int, array{
+         *     blockNumber: string,
+         *     timeStamp: string,
+         *     from: string,
+         *     to: string,
+         *     value: string,
+         *     contractAddress: string,
+         *     input: string,
+         *     type: string,
+         *     gas: string,
+         *     gasUsed: string,
+         *     isError: string,
+         *     errCode: string
+         * }>} $json */
+
+        $json = json_decode($response->getBody()->getContents(), true);
+        return array_map(fn(array $tx): InternalTransaction => new InternalTransaction(
+            $tx['blockNumber'],
+            $tx['timeStamp'],
+            $tx['from'],
+            $tx['to'],
+            $tx['value'],
+            $tx['contractAddress'],
+            $tx['input'],
+            $tx['type'],
+            $tx['gas'],
+            $tx['gasUsed'],
+            $tx['isError'],
+            $tx['errCode'],
+        ), $json['result']);
+    }
+
+    /**
+     * @see https://docs.etherscan.io/api-endpoints/accounts#get-internal-transactions-by-block-range
+     * @return InternalTransaction[]
+     */
+    public function getInternalTransactionsByBlockRange(int $startBlock, int $endBlock, int $page = 1, int $offset = 10): array
+    {
+        $params = [
+            'startblock' => $startBlock,
+            'endblock' => $endBlock,
+            'page' => $page,
+            'offset' => $offset,
+            'sort' => 'asc',
+        ];
+        $response = $this->client->sendRequest(self::MODULE_NAME, 'txlistinternal', $params);
+
+        /** @var array{result: array<int, array{
+         *     blockNumber: string,
+         *     timeStamp: string,
+         *     from: string,
+         *     to: string,
+         *     value: string,
+         *     contractAddress: string,
+         *     input: string,
+         *     type: string,
+         *     gas: string,
+         *     gasUsed: string,
+         *     isError: string,
+         *     errCode: string
+         * }>} $json */
+        $json = json_decode($response->getBody()->getContents(), true);
+
+        return array_map(fn(array $tx): InternalTransaction => new InternalTransaction(
+            $tx['blockNumber'],
+            $tx['timeStamp'],
+            $tx['from'],
+            $tx['to'],
+            $tx['value'],
+            $tx['contractAddress'],
+            $tx['input'],
+            $tx['type'],
+            $tx['gas'],
+            $tx['gasUsed'],
+            $tx['isError'],
+            $tx['errCode'],
+        ), $json['result']);
+    }
+
+    /**
+     * @see https://docs.etherscan.io/api-endpoints/accounts#get-a-list-of-erc20-token-transfer-events-by-address
+     * @return Erc20Event[]
+     */
+    public function getErc20TokenTransferEvents(?string $address = null, ?string $contractAddress = null, int $page = 1, int $offset = 100): array
+    {
+        if (null === $address && null === $contractAddress) {
+            throw new InvalidArgumentException('Either address or contract address must be provided');
+        }
+        $params = [
+            'page' => $page,
+            'offset' => $offset,
+            'sort' => 'asc',
+        ];
+        if (null !== $address) {
+            $params['address'] = $address;
+        }
+        if (null !== $contractAddress) {
+            $params['contractaddress'] = $contractAddress;
+        }
+
+        $response = $this->client->sendRequest(self::MODULE_NAME, 'tokentx', $params);
+
+        /** @var array{result: array<int, array{
+         *     blockNumber: string,
+         *     timeStamp: string,
+         *     hash: string,
+         *     nonce: string,
+         *     blockHash: string,
+         *     from: string,
+         *     contractAddress: string,
+         *     to: string,
+         *     value: string,
+         *     tokenName: string,
+         *     tokenSymbol: string,
+         *     tokenDecimal: string,
+         *     transactionIndex: string,
+         *     gas: string,
+         *     gasPrice: string,
+         *     gasUsed: string,
+         *     cumulativeGasUsed: string,
+         *     input: string,
+         *     confirmations: string
+         * }>} $json */
+        $json = json_decode($response->getBody()->getContents(), true);
+
+        return array_map(fn(array $tx): Erc20Event => new Erc20Event(
+            $tx['blockNumber'],
+            $tx['timeStamp'],
+            $tx['hash'],
+            $tx['nonce'],
+            $tx['blockHash'],
+            $tx['from'],
+            $tx['contractAddress'],
+            $tx['to'],
+            $tx['value'],
+            $tx['tokenName'],
+            $tx['tokenSymbol'],
+            $tx['tokenDecimal'],
+            $tx['transactionIndex'],
+            $tx['gas'],
+            $tx['gasPrice'],
+            $tx['gasUsed'],
+            $tx['cumulativeGasUsed'],
+            $tx['input'],
+            $tx['confirmations'],
         ), $json['result']);
     }
 }
