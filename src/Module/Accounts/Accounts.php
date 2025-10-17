@@ -8,7 +8,9 @@ use InvalidArgumentException;
 use seregazhuk\EtherscanApi\EtherscanClient;
 use seregazhuk\EtherscanApi\Module\Accounts\Model\AccountBalanceTag;
 use seregazhuk\EtherscanApi\Module\Accounts\Model\Balance;
+use seregazhuk\EtherscanApi\Module\Accounts\Model\Erc1155Event;
 use seregazhuk\EtherscanApi\Module\Accounts\Model\Erc20Event;
+use seregazhuk\EtherscanApi\Module\Accounts\Model\Erc721Event;
 use seregazhuk\EtherscanApi\Module\Accounts\Model\InternalTransaction;
 use seregazhuk\EtherscanApi\Module\Accounts\Model\NormalTransaction;
 
@@ -277,6 +279,144 @@ final class Accounts
             $tx['gasUsed'],
             $tx['cumulativeGasUsed'],
             $tx['input'],
+            $tx['confirmations'],
+        ), $json['result']);
+    }
+
+    /**
+     * @see https://docs.etherscan.io/api-endpoints/accounts#get-a-list-of-erc721-token-transfer-events-by-address
+     * @return Erc721Event[]
+     */
+    public function getErc721TokenTransferEvents(?string $address = null, ?string $contractAddress = null, int $page = 1, int $offset = 100): array
+    {
+        if (null === $address && null === $contractAddress) {
+            throw new InvalidArgumentException('Either address or contract address must be provided');
+        }
+        $params = [
+            'page' => $page,
+            'offset' => $offset,
+            'sort' => 'asc',
+        ];
+        if (null !== $address) {
+            $params['address'] = $address;
+        }
+        if (null !== $contractAddress) {
+            $params['contractaddress'] = $contractAddress;
+        }
+
+        $response = $this->client->sendRequest(self::MODULE_NAME, 'tokennfttx', $params);
+
+        /** @var array{result: array<int, array{
+         *     blockNumber: string,
+         *     timeStamp: string,
+         *     hash: string,
+         *     nonce: string,
+         *     blockHash: string,
+         *     from: string,
+         *     contractAddress: string,
+         *     to: string,
+         *     tokenID: string,
+         *     tokenName: string,
+         *     tokenSymbol: string,
+         *     tokenDecimal: string,
+         *     transactionIndex: string,
+         *     gas: string,
+         *     gasPrice: string,
+         *     gasUsed: string,
+         *     cumulativeGasUsed: string,
+         *     input: string,
+         *     confirmations: string
+         * }>} $json */
+        $json = json_decode($response->getBody()->getContents(), true);
+
+        return array_map(fn(array $tx): Erc721Event => new Erc721Event(
+            $tx['blockNumber'],
+            $tx['timeStamp'],
+            $tx['hash'],
+            $tx['nonce'],
+            $tx['blockHash'],
+            $tx['from'],
+            $tx['contractAddress'],
+            $tx['to'],
+            $tx['tokenID'],
+            $tx['tokenName'],
+            $tx['tokenSymbol'],
+            $tx['tokenDecimal'],
+            $tx['transactionIndex'],
+            $tx['gas'],
+            $tx['gasPrice'],
+            $tx['gasUsed'],
+            $tx['cumulativeGasUsed'],
+            $tx['input'],
+            $tx['confirmations'],
+        ), $json['result']);
+    }
+
+    /**
+     * @see https://docs.etherscan.io/api-endpoints/accounts#get-a-list-of-erc1155-token-transfer-events-by-address
+     * @return Erc1155Event[]
+     */
+    public function getErc1155TokenTransferEvents(?string $address = null, ?string $contractAddress = null, int $page = 1, int $offset = 100): array
+    {
+        if (null === $address && null === $contractAddress) {
+            throw new InvalidArgumentException('Either address or contract address must be provided');
+        }
+        $params = [
+            'page' => $page,
+            'offset' => $offset,
+            'sort' => 'asc',
+        ];
+        if (null !== $address) {
+            $params['address'] = $address;
+        }
+        if (null !== $contractAddress) {
+            $params['contractaddress'] = $contractAddress;
+        }
+
+        $response = $this->client->sendRequest(self::MODULE_NAME, 'token1155tx', $params);
+
+        /** @var array{result: array<int, array{
+         *     blockNumber: string,
+         *     timeStamp: string,
+         *     hash: string,
+         *     nonce: string,
+         *     blockHash: string,
+         *     from: string,
+         *     contractAddress: string,
+         *     to: string,
+         *     tokenID: string,
+         *     tokenValue: string,
+         *     tokenName: string,
+         *     tokenSymbol: string,
+         *     transactionIndex: string,
+         *     gas: string,
+         *     gasPrice: string,
+         *     gasUsed: string,
+         *     cumulativeGasUsed: string,
+         *     input: string,
+         *     confirmations: string
+         * }>} $json */
+        $json = json_decode($response->getBody()->getContents(), true);
+
+        return array_map(fn(array $tx): Erc1155Event => new Erc1155Event(
+            $tx['blockNumber'],
+            $tx['timeStamp'],
+            $tx['hash'],
+            $tx['nonce'],
+            $tx['blockHash'],
+            $tx['transactionIndex'],
+            $tx['gas'],
+            $tx['gasPrice'],
+            $tx['gasUsed'],
+            $tx['cumulativeGasUsed'],
+            $tx['input'],
+            $tx['contractAddress'],
+            $tx['from'],
+            $tx['to'],
+            $tx['tokenID'],
+            $tx['tokenValue'],
+            $tx['tokenName'],
+            $tx['tokenSymbol'],
             $tx['confirmations'],
         ), $json['result']);
     }

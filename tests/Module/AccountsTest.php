@@ -407,4 +407,209 @@ final class AccountsTest extends TestCase
         $this->expectExceptionMessage('Either address or contract address must be provided');
         $this->accounts->getErc20TokenTransferEvents();
     }
+
+    #[Test]
+    public function it_retrieves_erc721_token_transfer_events_by_address(): void
+    {
+        $json = <<<'JSON'
+            {
+               "status":"1",
+               "message":"OK",
+               "result":[
+                  {
+                     "blockNumber":"4708120",
+                     "timeStamp":"1512907118",
+                     "hash":"0x031e6968a8de362e4328d60dcc7f72f0d6fc84284c452f63176632177146de66",
+                     "nonce":"0",
+                     "blockHash":"0x4be19c278bfaead5cb0bc9476fa632e2447f6e6259e0303af210302d22779a24",
+                     "from":"0xb1690c08e213a35ed9bab7b318de14420fb57d8c",
+                     "contractAddress":"0x06012c8cf97bead5deae237070f9587f8e7a266d",
+                     "to":"0x6975be450864c02b4613023c2152ee0743572325",
+                     "tokenID":"202106",
+                     "tokenName":"CryptoKitties",
+                     "tokenSymbol":"CK",
+                     "tokenDecimal":"0",
+                     "transactionIndex":"81",
+                     "gas":"158820",
+                     "gasPrice":"40000000000",
+                     "gasUsed":"60508",
+                     "cumulativeGasUsed":"4880352",
+                     "input":"deprecated",
+                     "confirmations":"7990490"
+                  },
+                  {
+                     "blockNumber":"4708161",
+                     "timeStamp":"1512907756",
+                     "hash":"0x9626e7064b68b5463cf677e10815a0b394645a0bfa245f26a2de6074324e83ff",
+                     "nonce":"1",
+                     "blockHash":"0xe1c6cbc39a723496f4cbc3e70241012854f2e88b4d2d5f339d8f0a4a1cc406d8",
+                     "from":"0xb1690c08e213a35ed9bab7b318de14420fb57d8c",
+                     "contractAddress":"0x06012c8cf97bead5deae237070f9587f8e7a266d",
+                     "to":"0x6975be450864c02b4613023c2152ee0743572325",
+                     "tokenID":"147739",
+                     "tokenName":"CryptoKitties",
+                     "tokenSymbol":"CK",
+                     "tokenDecimal":"0",
+                     "transactionIndex":"41",
+                     "gas":"135963",
+                     "gasPrice":"40000000000",
+                     "gasUsed":"45508",
+                     "cumulativeGasUsed":"3359342",
+                     "input":"deprecated",
+                     "confirmations":"7990449"
+                  }
+               ]
+            }
+        JSON;
+
+        $this->httpClientMock
+            ->expects($this->once())
+            ->method('sendRequest')
+            ->with($this->callback(function (RequestInterface $request): bool {
+                $this->assertSame('chainid=1&module=account&action=tokennfttx&apikey=apiKey&page=1&offset=100&sort=asc&address=0x6975be450864c02b4613023c2152ee0743572325&contractaddress=0x06012c8cf97bead5deae237070f9587f8e7a266d', $request->getUri()->getQuery());
+
+                return true;
+            }))
+            ->willReturn(new Response(200, [], $json));
+
+        $erc721Events = $this->accounts->getErc721TokenTransferEvents('0x6975be450864c02b4613023c2152ee0743572325', '0x06012c8cf97bead5deae237070f9587f8e7a266d');
+        $this->assertCount(2, $erc721Events);
+
+        $this->assertSame('4708120', $erc721Events[0]->blockNumber);
+        $this->assertSame('1512907118', $erc721Events[0]->timeStamp);
+        $this->assertSame('0x031e6968a8de362e4328d60dcc7f72f0d6fc84284c452f63176632177146de66', $erc721Events[0]->hash);
+        $this->assertSame('0', $erc721Events[0]->nonce);
+        $this->assertSame('0x4be19c278bfaead5cb0bc9476fa632e2447f6e6259e0303af210302d22779a24', $erc721Events[0]->blockHash);
+        $this->assertSame('0xb1690c08e213a35ed9bab7b318de14420fb57d8c', $erc721Events[0]->from);
+        $this->assertSame('0x06012c8cf97bead5deae237070f9587f8e7a266d', $erc721Events[0]->contractAddress);
+        $this->assertSame('0x6975be450864c02b4613023c2152ee0743572325', $erc721Events[0]->to);
+        $this->assertSame('202106', $erc721Events[0]->tokenId);
+        $this->assertSame('CryptoKitties', $erc721Events[0]->tokenName);
+        $this->assertSame('CK', $erc721Events[0]->tokenSymbol);
+        $this->assertSame('0', $erc721Events[0]->tokenDecimal);
+        $this->assertSame('81', $erc721Events[0]->transactionIndex);
+        $this->assertSame('158820', $erc721Events[0]->gas);
+        $this->assertSame('40000000000', $erc721Events[0]->gasPrice);
+        $this->assertSame('60508', $erc721Events[0]->gasUsed);
+        $this->assertSame('4880352', $erc721Events[0]->cumulativeGasUsed);
+        $this->assertSame('deprecated', $erc721Events[0]->input);
+        $this->assertSame('7990490', $erc721Events[0]->confirmations);
+    }
+
+    #[Test]
+    public function either_address_or_contract_address_must_be_provided_to_retrieve_erc721_events(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Either address or contract address must be provided');
+        $this->accounts->getErc721TokenTransferEvents();
+    }
+
+    #[Test]
+    public function it_retrieves_erc1155_token_transfer_events_by_address(): void
+    {
+        $json = <<<'JSON'
+            {
+               "status":"1",
+               "message":"OK",
+               "result":[
+                  {
+                     "blockNumber":"13472395",
+                     "timeStamp":"1634973285",
+                     "hash":"0x643b15f3ffaad5d38e33e5872b4ebaa7a643eda8b50ffd5331f682934ee65d4d",
+                     "nonce":"41",
+                     "blockHash":"0xa5da536dfbe8125eb146114e2ee0d0bdef2b20483aacbf30fed6b60f092059e6",
+                     "transactionIndex":"100",
+                     "gas":"140000",
+                     "gasPrice":"52898577246",
+                     "gasUsed":"105030",
+                     "cumulativeGasUsed":"11739203",
+                     "input":"deprecated",
+                     "contractAddress":"0x76be3b62873462d2142405439777e971754e8e77",
+                     "from":"0x1e63326a84d2fa207bdfa856da9278a93deba418",
+                     "to":"0x83f564d180b58ad9a02a449105568189ee7de8cb",
+                     "tokenID":"10371",
+                     "tokenValue":"1",
+                     "tokenName":"parallel",
+                     "tokenSymbol":"LL",
+                     "confirmations":"1447769"
+                  },
+                  {
+                     "blockNumber":"14049909",
+                     "timeStamp":"1642781541",
+                     "hash":"0x58353aab15a4b5a77333b87619edaa749c7f3cf8bb2263a1c0865d73bf1264bd",
+                     "nonce":"4",
+                     "blockHash":"0x1e88a63a4cb4086a747644b8ab7ff3434540930f3029eacb8add08b15974fdc9",
+                     "transactionIndex":"114",
+                     "gas":"253032",
+                     "gasPrice":"225052869211",
+                     "gasUsed":"184899",
+                     "cumulativeGasUsed":"6855790",
+                     "input":"deprecated",
+                     "contractAddress":"0x76be3b62873462d2142405439777e971754e8e77",
+                     "from":"0x83f564d180b58ad9a02a449105568189ee7de8cb",
+                     "to":"0x80833dc92d326a81d0cb74982a8e6f1a3887f837",
+                     "tokenID":"10371",
+                     "tokenValue":"1",
+                     "tokenName":"parallel",
+                     "tokenSymbol":"LL",
+                     "confirmations":"870255"
+                  },
+                  {
+                     "blockNumber":"14067255",
+                     "timeStamp":"1643012777",
+                     "hash":"0x3222b5f71e577c2551e17701eaf39b308b976bbe6bf6ce3f8c20549527b9d6ae",
+                     "nonce":"7",
+                     "blockHash":"0x236cfed8b42fa6cb8956f6e7b889797047d9af0883066b1f3be8284beda16e17",
+                     "transactionIndex":"172",
+                     "gas":"56873",
+                     "gasPrice":"69434775835",
+                     "gasUsed":"52073",
+                     "cumulativeGasUsed":"17181952",
+                     "input":"deprecated",
+                     "contractAddress":"0x76be3b62873462d2142405439777e971754e8e77",
+                     "from":"0x9d48305f859a0006b57da25c80af62ecb8e5c6a2",
+                     "to":"0x83f564d180b58ad9a02a449105568189ee7de8cb",
+                     "tokenID":"10372",
+                     "tokenValue":"1",
+                     "tokenName":"parallel",
+                     "tokenSymbol":"LL",
+                     "confirmations":"852909"
+                  }
+               ]
+            }
+        JSON;
+
+        $this->httpClientMock
+            ->expects($this->once())
+            ->method('sendRequest')
+            ->with($this->callback(function (RequestInterface $request): bool {
+                $this->assertSame('chainid=1&module=account&action=token1155tx&apikey=apiKey&page=1&offset=100&sort=asc&address=0x83f564d180b58ad9a02a449105568189ee7de8cb&contractaddress=0x76be3b62873462d2142405439777e971754e8e77', $request->getUri()->getQuery());
+
+                return true;
+            }))
+            ->willReturn(new Response(200, [], $json));
+
+        $erc1155Events = $this->accounts->getErc1155TokenTransferEvents('0x83f564d180b58ad9a02a449105568189ee7de8cb', '0x76be3b62873462d2142405439777e971754e8e77');
+        $this->assertCount(3, $erc1155Events);
+
+        $this->assertSame('13472395', $erc1155Events[0]->blockNumber);
+        $this->assertSame('1634973285', $erc1155Events[0]->timeStamp);
+        $this->assertSame('0x643b15f3ffaad5d38e33e5872b4ebaa7a643eda8b50ffd5331f682934ee65d4d', $erc1155Events[0]->hash);
+        $this->assertSame('41', $erc1155Events[0]->nonce);
+        $this->assertSame('0xa5da536dfbe8125eb146114e2ee0d0bdef2b20483aacbf30fed6b60f092059e6', $erc1155Events[0]->blockHash);
+        $this->assertSame('100', $erc1155Events[0]->transactionIndex);
+        $this->assertSame('140000', $erc1155Events[0]->gas);
+        $this->assertSame('52898577246', $erc1155Events[0]->gasPrice);
+        $this->assertSame('105030', $erc1155Events[0]->gasUsed);
+        $this->assertSame('11739203', $erc1155Events[0]->cumulativeGasUsed);
+        $this->assertSame('deprecated', $erc1155Events[0]->input);
+        $this->assertSame('0x76be3b62873462d2142405439777e971754e8e77', $erc1155Events[0]->contractAddress);
+        $this->assertSame('0x1e63326a84d2fa207bdfa856da9278a93deba418', $erc1155Events[0]->from);
+        $this->assertSame('0x83f564d180b58ad9a02a449105568189ee7de8cb', $erc1155Events[0]->to);
+        $this->assertSame('10371', $erc1155Events[0]->tokenId);
+        $this->assertSame('1', $erc1155Events[0]->tokenValue);
+        $this->assertSame('parallel', $erc1155Events[0]->tokenName);
+        $this->assertSame('LL', $erc1155Events[0]->tokenSymbol);
+        $this->assertSame('1447769', $erc1155Events[0]->confirmations);
+    }
 }
