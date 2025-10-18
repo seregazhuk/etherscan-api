@@ -61,6 +61,41 @@ final class AccountsTest extends TestCase
     }
 
     #[Test]
+    public function it_retrieves_address_funded_info(): void
+    {
+        $json = <<<'JSON'
+            {
+               "status":"1",
+               "message":"OK",
+               "result":{
+                  "block":8665142,
+                  "timeStamp":"1704119631",
+                  "fundingAddress":"0xcb566e3b6934fa77258d68ea18e931fa75e1aaaa",
+                  "fundingTxn":"0x495cdddefc559eb5928589c0bd8070e8182ff0aed082bde3cd6fbd78431ca278",
+                  "value":"500000000000000"
+               }
+            }
+        JSON;
+
+        $this->httpClientMock
+            ->expects($this->once())
+            ->method('sendRequest')
+            ->with($this->callback(function (RequestInterface $request): bool {
+                $this->assertSame('chainid=1&module=account&action=fundedby&apikey=apiKey&address=0x9dd134d14d1e65f84b706d6f205cd5b1cd03a46b', $request->getUri()->getQuery());
+
+                return true;
+            }))
+            ->willReturn(new Response(200, [], $json));
+
+        $addressFundedInfo = $this->accounts->getFundedBy('0x9dd134d14d1e65f84b706d6f205cd5b1cd03a46b');
+        $this->assertSame(8665142, $addressFundedInfo->block);
+        $this->assertSame("1704119631", $addressFundedInfo->timestamp);
+        $this->assertSame('0xcb566e3b6934fa77258d68ea18e931fa75e1aaaa', $addressFundedInfo->fundingAddress);
+        $this->assertSame('0x495cdddefc559eb5928589c0bd8070e8182ff0aed082bde3cd6fbd78431ca278', $addressFundedInfo->fundingTxn);
+        $this->assertSame('500000000000000', $addressFundedInfo->value);
+    }
+
+    #[Test]
     public function it_retrieves_accounts_balances(): void
     {
         $json = <<<'JSON'
@@ -171,7 +206,7 @@ final class AccountsTest extends TestCase
         $this->assertSame('0xc52783ad354aecc04c670047754f062e3d6d04e8f5b24774472651f9c3882c60', $transactions[0]->hash);
         $this->assertSame('0x61016060', $transactions[0]->methodId);
         $this->assertSame('', $transactions[0]->functionName);
-        $this->assertSame('1654646411', $transactions[0]->timeStamp);
+        $this->assertSame('1654646411', $transactions[0]->timestamp);
         $this->assertSame('1', $transactions[0]->nonce);
         $this->assertSame('0x7e1638fd2c6bdd05ffd83c1cf06c63e2f67d0f802084bef076d06bdcf86d1bb0', $transactions[0]->blockHash);
         $this->assertSame('61', $transactions[0]->transactionIndex);
@@ -234,7 +269,7 @@ final class AccountsTest extends TestCase
         $this->assertCount(1, $transactions);
 
         $this->assertSame('1743059', $transactions[0]->blockNumber);
-        $this->assertSame('1466489498', $transactions[0]->timeStamp);
+        $this->assertSame('1466489498', $transactions[0]->timestamp);
         $this->assertSame('0x2cac6e4b11d6b58f6d3c1c9d5fe8faa89f60e5a2', $transactions[0]->from);
         $this->assertSame('0x66a1c3eaf0f1ffc28d209c0763ed0ca614f3b002', $transactions[0]->to);
         $this->assertSame('7106740000000000', $transactions[0]->value);
@@ -287,7 +322,7 @@ final class AccountsTest extends TestCase
         $this->assertCount(1, $transactions);
 
         $this->assertSame('1743059', $transactions[0]->blockNumber);
-        $this->assertSame('1466489498', $transactions[0]->timeStamp);
+        $this->assertSame('1466489498', $transactions[0]->timestamp);
         $this->assertSame('0x2cac6e4b11d6b58f6d3c1c9d5fe8faa89f60e5a2', $transactions[0]->from);
         $this->assertSame('0x66a1c3eaf0f1ffc28d209c0763ed0ca614f3b002', $transactions[0]->to);
         $this->assertSame('7106740000000000', $transactions[0]->value);
@@ -368,7 +403,7 @@ final class AccountsTest extends TestCase
         $this->assertCount(2, $erc20Events);
 
         $this->assertSame('4730207', $erc20Events[0]->blockNumber);
-        $this->assertSame('1513240363', $erc20Events[0]->timeStamp);
+        $this->assertSame('1513240363', $erc20Events[0]->timestamp);
         $this->assertSame('0x642ae78fafbb8032da552d619ad43f1d81e4dd7c', $erc20Events[0]->from);
         $this->assertSame('0x4e83362442b8d1bec281594cea3050c8eb01311c', $erc20Events[0]->to);
         $this->assertSame('5901522149285533025181', $erc20Events[0]->value);
@@ -384,7 +419,7 @@ final class AccountsTest extends TestCase
         $this->assertSame('7968350', $erc20Events[0]->confirmations);
 
         $this->assertSame('4764973', $erc20Events[1]->blockNumber);
-        $this->assertSame('1513764636', $erc20Events[1]->timeStamp);
+        $this->assertSame('1513764636', $erc20Events[1]->timestamp);
         $this->assertSame('0x4e83362442b8d1bec281594cea3050c8eb01311c', $erc20Events[1]->from);
         $this->assertSame('0x69076e44a9c70a67d5b79d95795aba299083c275', $erc20Events[1]->to);
         $this->assertSame('132520488141080', $erc20Events[1]->value);
@@ -476,7 +511,7 @@ final class AccountsTest extends TestCase
         $this->assertCount(2, $erc721Events);
 
         $this->assertSame('4708120', $erc721Events[0]->blockNumber);
-        $this->assertSame('1512907118', $erc721Events[0]->timeStamp);
+        $this->assertSame('1512907118', $erc721Events[0]->timestamp);
         $this->assertSame('0x031e6968a8de362e4328d60dcc7f72f0d6fc84284c452f63176632177146de66', $erc721Events[0]->hash);
         $this->assertSame('0', $erc721Events[0]->nonce);
         $this->assertSame('0x4be19c278bfaead5cb0bc9476fa632e2447f6e6259e0303af210302d22779a24', $erc721Events[0]->blockHash);
@@ -593,7 +628,7 @@ final class AccountsTest extends TestCase
         $this->assertCount(3, $erc1155Events);
 
         $this->assertSame('13472395', $erc1155Events[0]->blockNumber);
-        $this->assertSame('1634973285', $erc1155Events[0]->timeStamp);
+        $this->assertSame('1634973285', $erc1155Events[0]->timestamp);
         $this->assertSame('0x643b15f3ffaad5d38e33e5872b4ebaa7a643eda8b50ffd5331f682934ee65d4d', $erc1155Events[0]->hash);
         $this->assertSame('41', $erc1155Events[0]->nonce);
         $this->assertSame('0xa5da536dfbe8125eb146114e2ee0d0bdef2b20483aacbf30fed6b60f092059e6', $erc1155Events[0]->blockHash);

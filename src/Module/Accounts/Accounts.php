@@ -7,6 +7,7 @@ namespace seregazhuk\EtherscanApi\Module\Accounts;
 use InvalidArgumentException;
 use seregazhuk\EtherscanApi\EtherscanClient;
 use seregazhuk\EtherscanApi\Module\Accounts\Model\AccountBalanceTag;
+use seregazhuk\EtherscanApi\Module\Accounts\Model\AddressFundedInfo;
 use seregazhuk\EtherscanApi\Module\Accounts\Model\Balance;
 use seregazhuk\EtherscanApi\Module\Accounts\Model\Erc1155Event;
 use seregazhuk\EtherscanApi\Module\Accounts\Model\Erc20Event;
@@ -419,5 +420,29 @@ final class Accounts
             $tx['tokenSymbol'],
             $tx['confirmations'],
         ), $json['result']);
+    }
+
+    /**
+     * @see https://docs.etherscan.io/api-endpoints/accounts#get-address-funded-by
+     */
+    public function getFundedBy(string $address): AddressFundedInfo
+    {
+        $response = $this->client->sendRequest(self::MODULE_NAME, 'fundedby', ['address' => $address]);
+
+        /** @var array{result: array{
+         *     block: int,
+         *     timeStamp: string,
+         *     fundingAddress: string,
+         *     fundingTxn: string,
+         *     value: string,
+         * }} $json */
+        $json = json_decode($response->getBody()->getContents(), true);
+        return new AddressFundedInfo(
+            $json['result']['block'],
+            $json['result']['timeStamp'],
+            $json['result']['fundingAddress'],
+            $json['result']['fundingTxn'],
+            $json['result']['value'],
+        );
     }
 }
