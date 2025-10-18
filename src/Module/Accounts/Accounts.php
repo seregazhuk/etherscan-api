@@ -422,6 +422,9 @@ final class Accounts
         ), $json['result']);
     }
 
+    /**
+     * @see https://docs.etherscan.io/api-endpoints/accounts#get-address-funded-by
+     */
     public function getFundedBy(string $address): AddressFundedInfo
     {
         $response = $this->client->sendRequest(self::MODULE_NAME, 'fundedby', ['address' => $address]);
