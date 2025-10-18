@@ -8,7 +8,7 @@ final class InternalTransaction
 {
     public function __construct(
         public readonly string $blockNumber,
-        public readonly string $timeStamp,
+        public readonly string $timestamp,
         public readonly string $from,
         public readonly string $to,
         public readonly string $value,

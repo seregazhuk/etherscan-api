@@ -8,7 +8,7 @@ final class NormalTransaction
 {
     public function __construct(
         public readonly string $blockNumber,
-        public readonly string $timeStamp,
+        public readonly string $timestamp,
         public readonly string $hash,
         public readonly string $nonce,
         public readonly string $blockHash,
