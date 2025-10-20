@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace seregazhuk\EtherscanApi\Module\Proxy;
 
+use phpseclib3\Math\BigInteger;
 use seregazhuk\EtherscanApi\EtherscanClient;
 use seregazhuk\EtherscanApi\Module\Proxy\Model\BlockInfo;
 use seregazhuk\EtherscanApi\Module\Proxy\Model\TransactionByHashInfo;
@@ -46,7 +47,7 @@ final class Proxy
 
         return new TransactionByHashInfo(
             $json['result']['blockHash'],
-            $json['result']['blockNumber'],
+            new BigInteger($json['result']['blockNumber'], 16),
             $json['result']['from'],
             $json['result']['gas'],
             $json['result']['gasPrice'],
@@ -65,13 +66,13 @@ final class Proxy
     /**
      * @see https://docs.etherscan.io/api-endpoints/geth-parity-proxy#eth_blocknumber
      */
-    public function getBlockNumber(): int
+    public function getBlockNumber(): BigInteger
     {
         $response = $this->client->sendRequest(self::MODULE_NAME, 'eth_blockNumber');
         /** @var array{result: string} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
-        return (int) hexdec($json['result']);
+        return new BigInteger($json['result'], 16);
     }
 
     /**
@@ -149,25 +150,25 @@ final class Proxy
     /**
      * @see https://docs.etherscan.io/api-endpoints/geth-parity-proxy#eth_getblocktransactioncountbynumber
      */
-    public function getTransactionCountByNumber(string $hexBlockNumber): int
+    public function getTransactionCountByNumber(string $hexBlockNumber): BigInteger
     {
         $response = $this->client->sendRequest(self::MODULE_NAME, 'eth_getBlockTransactionCountByNumber', ['tag' => $hexBlockNumber]);
         /** @var array{result: string} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
-        return (int) hexdec($json['result']);
+        return new BigInteger($json['result'], 16);
     }
 
     /**
      * @see https://docs.etherscan.io/api-endpoints/geth-parity-proxy#eth_gettransactioncount
      */
-    public function getTransactionCount(string $address): int
+    public function getTransactionCount(string $address): BigInteger
     {
         $response = $this->client->sendRequest(self::MODULE_NAME, 'eth_getTransactionCount', ['address' => $address]);
         /** @var array{result: string} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
-        return (int) hexdec($json['result']);
+        return new BigInteger($json['result'], 16);
     }
 
     /**
@@ -205,7 +206,7 @@ final class Proxy
 
         return new TransactionReceipt(
             $json['result']['blockHash'],
-            $json['result']['blockNumber'],
+            new BigInteger($json['result']['blockNumber'], 16),
             $json['result']['contractAddress'],
             $json['result']['cumulativeGasUsed'],
             $json['result']['from'],
@@ -214,7 +215,7 @@ final class Proxy
                 $log['address'],
                 $log['topics'],
                 $log['data'],
-                $log['blockNumber'],
+                new BigInteger($log['blockNumber'], 16),
                 $log['transactionHash'],
                 $log['transactionIndex'],
                 $log['logIndex'],
@@ -233,12 +234,12 @@ final class Proxy
     /**
      * @see https://docs.etherscan.io/api-endpoints/geth-parity-proxy#eth_gasprice
      */
-    public function getGasPrice(): string
+    public function getGasPrice(): BigInteger
     {
         $response = $this->client->sendRequest(self::MODULE_NAME, 'eth_gasPrice');
         /** @var array{result: string} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
-        return (string) hexdec($json['result']);
+        return new BigInteger($json['result'], 16);
     }
 }

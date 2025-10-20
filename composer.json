@@ -17,6 +17,7 @@
         "php-http/discovery": "^1.0",
         "php-http/guzzle7-adapter": "^1.1",
         "php-http/httplug": "^2.0",
+        "phpseclib/phpseclib": "^3.0",
         "psr/http-client-implementation": "^1.0",
         "psr/http-factory-implementation": "^1.0"
     },

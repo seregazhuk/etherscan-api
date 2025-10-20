@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace seregazhuk\EtherscanApi\Module\Proxy\Model;
 
+use phpseclib3\Math\BigInteger;
+
 final class TransactionReceipt
 {
     public function __construct(
         public readonly string $blockHash,
-        public readonly string $blockNumber,
+        public readonly BigInteger $blockNumber,
         public readonly ?string $contractAddress,
         public readonly string $cumulativeGasUsed,
         public readonly string $from,

@@ -6,6 +6,7 @@ namespace tests\Module;
 
 use GuzzleHttp\Psr7\Response;
 use Http\Discovery\Psr17FactoryDiscovery;
+use phpseclib3\Math\BigInteger;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -88,7 +89,7 @@ final class ProxyTest extends TestCase
             '0xf850331061196b8f2b67e1f43aaa9e69504c059d3d3fb9547b04f9ed4d141ab7',
             $transaction->blockHash,
         );
-        $this->assertSame('0xcf2420', $transaction->blockNumber);
+        $this->assertTrue((new BigInteger('0xcf2420', 16))->equals($transaction->blockNumber));
         $this->assertSame('0x00192fb10df37c9fb26829eb2cc623cd1bf599e8', $transaction->from);
         $this->assertSame('0x5208', $transaction->gas);
         $this->assertSame('0x19f017ef49', $transaction->gasPrice);
@@ -155,7 +156,7 @@ final class ProxyTest extends TestCase
             '0xf850331061196b8f2b67e1f43aaa9e69504c059d3d3fb9547b04f9ed4d141ab7',
             $transaction->blockHash,
         );
-        $this->assertSame('0xcf2420', $transaction->blockNumber);
+        $this->assertTrue((new BigInteger('0xcf2420', 16))->equals($transaction->blockNumber));
         $this->assertSame('0x00192fb10df37c9fb26829eb2cc623cd1bf599e8', $transaction->from);
         $this->assertSame('0x5208', $transaction->gas);
         $this->assertSame('0x19f017ef49', $transaction->gasPrice);
@@ -196,7 +197,7 @@ final class ProxyTest extends TestCase
             )
             ->willReturn(new Response(200, [], $json));
         $result = $this->proxy->getBlockNumber();
-        $this->assertSame(12806953, $result);
+        $this->assertTrue((new BigInteger('0xc36b29', 16))->equals($result));
     }
 
     #[Test]
@@ -345,7 +346,7 @@ final class ProxyTest extends TestCase
             )
             ->willReturn(new Response(200, [], $json));
         $result = $this->proxy->getTransactionCountByNumber('0x10FB78');
-        $this->assertSame(3, $result);
+        $this->assertTrue((new BigInteger('0x3', 16))->equals($result));
     }
 
     #[Test]
@@ -374,7 +375,7 @@ final class ProxyTest extends TestCase
             )
             ->willReturn(new Response(200, [], $json));
         $result = $this->proxy->getTransactionCount('0x4bd5900Cb274ef15b153066D736bf3e83A9ba44e');
-        $this->assertSame(68, $result);
+        $this->assertTrue((new BigInteger('0x44', 16))->equals($result));
     }
 
     #[Test]
@@ -436,7 +437,7 @@ final class ProxyTest extends TestCase
 
         $result = $this->proxy->getTransactionReceipt('0xf75e354c5edc8efed9b59ee9f67a80845ade7d0c');
         $this->assertSame('0x07c17710dbb7514e92341c9f83b4aab700c5dba7c4fb98caadd7926a32e47799', $result->blockHash);
-        $this->assertSame('0xcf2427', $result->blockNumber);
+        $this->assertTrue((new BigInteger('0xcf2427', 16))->equals($result->blockNumber));
         $this->assertSame('0x292f04a44506c2fd49bac032e1ca148c35a478c8', $result->from);
         $this->assertSame('0xb41d', $result->gasUsed);
         $this->assertSame('0xdac17f958d2ee523a2206206994597c13d831ec7', $result->logs[0]->address);
@@ -455,7 +456,7 @@ final class ProxyTest extends TestCase
 
         // Logs
         $this->assertSame('0x00000000000000000000000000000000000000000000000000000000013f81a6', $result->logs[0]->data);
-        $this->assertSame('0xcf2427', $result->logs[0]->blockNumber);
+        $this->assertTrue((new BigInteger('0xcf2427', 16))->equals($result->logs[0]->blockNumber));
         $this->assertSame(
             '0xadb8aec59e80db99811ac4a0235efa3e45da32928bcff557998552250fa672eb',
             $result->logs[0]->transactionHash,
@@ -507,6 +508,6 @@ final class ProxyTest extends TestCase
             )
             ->willReturn(new Response(200, [], $json));
         $result = $this->proxy->getGasPrice();
-        $this->assertSame('18000000000', $result);
+        $this->assertTrue((new BigInteger('0x430e23400', 16))->equals($result));
     }
 }

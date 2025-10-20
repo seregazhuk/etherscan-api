@@ -7,6 +7,7 @@ namespace Module;
 use GuzzleHttp\Psr7\Response;
 use Http\Discovery\Psr17FactoryDiscovery;
 use InvalidArgumentException;
+use phpseclib3\Math\BigInteger;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -202,7 +203,7 @@ final class AccountsTest extends TestCase
         $transactions = $this->accounts->getTransactions('0xc5102fE9359FD9a28f877a67E36B0F050d81a3CC');
         $this->assertCount(2, $transactions);
 
-        $this->assertSame('14923678', $transactions[0]->blockNumber);
+        $this->assertTrue((new BigInteger('14923678', 16))->equals($transactions[0]->blockNumber));
         $this->assertSame('0xc52783ad354aecc04c670047754f062e3d6d04e8f5b24774472651f9c3882c60', $transactions[0]->hash);
         $this->assertSame('0x61016060', $transactions[0]->methodId);
         $this->assertSame('', $transactions[0]->functionName);
@@ -224,7 +225,7 @@ final class AccountsTest extends TestCase
         $this->assertSame('122485', $transactions[0]->confirmations);
         $this->assertSame('0x61016060', $transactions[0]->methodId);
 
-        $this->assertSame('14923692', $transactions[1]->blockNumber);
+        $this->assertTrue((new BigInteger('14923692', 16))->equals($transactions[1]->blockNumber));
         $this->assertSame('0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338', $transactions[1]->hash);
         $this->assertSame('transfer(address _to, uint256 _value)', $transactions[1]->functionName);
     }
