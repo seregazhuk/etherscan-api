@@ -65,13 +65,13 @@ final class Proxy
     /**
      * @see https://docs.etherscan.io/api-endpoints/geth-parity-proxy#eth_blocknumber
      */
-    public function getBlockNumber(): string
+    public function getBlockNumber(): int
     {
         $response = $this->client->sendRequest(self::MODULE_NAME, 'eth_blockNumber');
         /** @var array{result: string} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
-        return $json['result'];
+        return (int) hexdec($json['result']);
     }
 
     /**
