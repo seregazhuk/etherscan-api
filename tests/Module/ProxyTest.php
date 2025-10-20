@@ -196,7 +196,7 @@ final class ProxyTest extends TestCase
             )
             ->willReturn(new Response(200, [], $json));
         $result = $this->proxy->getBlockNumber();
-        $this->assertSame('0xc36b29', $result);
+        $this->assertSame(12806953, $result);
     }
 
     #[Test]
