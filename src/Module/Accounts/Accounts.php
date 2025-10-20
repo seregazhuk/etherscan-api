@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace seregazhuk\EtherscanApi\Module\Accounts;
 
 use InvalidArgumentException;
+use phpseclib3\Math\BigInteger;
 use seregazhuk\EtherscanApi\EtherscanClient;
 use seregazhuk\EtherscanApi\Module\Accounts\Model\AccountBalanceTag;
 use seregazhuk\EtherscanApi\Module\Accounts\Model\AddressFundedInfo;
@@ -99,7 +100,7 @@ final class Accounts
 
         $json = json_decode($response->getBody()->getContents(), true);
         return array_map(fn(array $tx): NormalTransaction => new NormalTransaction(
-            $tx['blockNumber'],
+            new BigInteger($tx['blockNumber'], 16),
             $tx['timeStamp'],
             $tx['hash'],
             $tx['nonce'],
