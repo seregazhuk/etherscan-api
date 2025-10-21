@@ -25,7 +25,7 @@ final class Accounts
     /**
      * @see https://docs.etherscan.io/api-endpoints/accounts#get-ether-balance-for-a-single-address
      */
-    public function getBalance(string $address, AccountBalanceTag $tag = AccountBalanceTag::LATEST): string
+    public function getBalance(string $address, AccountBalanceTag $tag = AccountBalanceTag::LATEST): BigInteger
     {
         $params = [
             'tag' => $tag->value,
@@ -36,7 +36,7 @@ final class Accounts
         /** @var array{result: string} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
-        return $json['result'];
+        return new BigInteger($json['result'], 16);
     }
 
     /**
@@ -58,7 +58,7 @@ final class Accounts
          * }>} $json */
         $json = json_decode($response->getBody()->getContents(), true);
 
-        return array_map(fn(array $balance): Balance => new Balance($balance['account'], $balance['balance']), $json['result']);
+        return array_map(fn(array $balance): Balance => new Balance($balance['account'], new BigInteger($balance['balance'], 16)), $json['result']);
     }
 
     /**
