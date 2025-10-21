@@ -58,7 +58,7 @@ final class AccountsTest extends TestCase
             ->willReturn(new Response(200, [], $json));
 
         $balance = $this->accounts->getBalance('0xde0b295669a9fd93d5f28d9ec85e40f4cb697bae');
-        $this->assertSame('40891626854930000000000', $balance);
+        $this->assertTrue((new BigInteger('40891626854930000000000', 16))->equals($balance));
     }
 
     #[Test]
@@ -129,9 +129,9 @@ final class AccountsTest extends TestCase
         $balances = $this->accounts->getBalances(['0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a', '0x63a9975ba31b0b9626b34300f7f627147df1f526']);
         $this->assertCount(2, $balances);
         $this->assertSame('0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a', $balances[0]->account);
-        $this->assertSame('27000616846559600000999', $balances[0]->balance);
+        $this->assertTrue((new BigInteger('27000616846559600000999', 16))->equals($balances[0]->balance));
         $this->assertSame('0x63a9975ba31b0b9626b34300f7f627147df1f526', $balances[1]->account);
-        $this->assertSame('2039670355000', $balances[1]->balance);
+        $this->assertTrue((new BigInteger('2039670355000', 16))->equals($balances[1]->balance));
     }
 
     #[Test]
