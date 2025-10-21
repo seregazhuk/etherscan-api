@@ -40,7 +40,7 @@ final class Accounts
     }
 
     /**
-     * @see https://docs.etherscan.io/api-endpoints/contracts#get-contract-abi-for-verified-contract-source-codes
+     * @see https://docs.etherscan.io/api-endpoints/accounts#get-ether-balance-for-multiple-addresses-in-a-single-call
      *
      * @param string[]  $addresses
      * @return Balance[]
