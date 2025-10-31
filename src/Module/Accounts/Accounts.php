@@ -23,7 +23,8 @@ final class Accounts
     public function __construct(private readonly EtherscanClient $client) {}
 
     /**
-     * @see https://docs.etherscan.io/api-endpoints/accounts#get-ether-balance-for-a-single-address
+     * Get Native Balance for an Address
+     * @see https://docs.etherscan.io/api-reference/endpoint/balance
      */
     public function getBalance(string $address, AccountBalanceTag $tag = AccountBalanceTag::LATEST): BigInteger
     {
@@ -40,8 +41,6 @@ final class Accounts
     }
 
     /**
-     * @see https://docs.etherscan.io/api-endpoints/accounts#get-ether-balance-for-multiple-addresses-in-a-single-call
-     *
      * @param string[]  $addresses
      * @return Balance[]
      */
@@ -62,7 +61,7 @@ final class Accounts
     }
 
     /**
-     * @see https://docs.etherscan.io/api-endpoints/accounts#get-a-list-of-normal-transactions-by-address
+     * @see https://docs.etherscan.io/api-reference/endpoint/txlist
      * @return NormalTransaction[]
      */
     public function getTransactions(string $address, int $page = 1, int $offset = 10): array
@@ -124,7 +123,7 @@ final class Accounts
     }
 
     /**
-     * @see https://docs.etherscan.io/api-endpoints/accounts#get-a-list-of-internal-transactions-by-address
+     * @see https://docs.etherscan.io/api-reference/endpoint/txlistinternal-txhash
      * @return InternalTransaction[]
      */
     public function getInternalTransactionsByHash(string $hash, int $page = 1, int $offset = 10): array

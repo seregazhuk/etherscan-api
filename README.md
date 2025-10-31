@@ -11,7 +11,7 @@ PHP client for [Etherscan API](https://docs.etherscan.io) (and its families like
 ## Installation
 
 ```bash
-composer req seregazhuk/etherscan-api 
+composer req seregazhuk/etherscan-api:dev-main 
 ```
 
 ## Quick Start
@@ -33,22 +33,25 @@ echo $isConfirmed ? 'Confirmed' : 'Not confirmed';
 
 ### Accounts
 
-https://docs.etherscan.io/api-endpoints/accounts#get-ether-balance-for-a-single-address
-Get Ether balance for a single address: 
+[Get Ether balance for a single address](https://docs.etherscan.io/api-endpoints/accounts#get-ether-balance-for-a-single-address): 
 
 ```php
-$balance = $this->accounts->getBalance('0xde0b295669a9fd93d5f28d9ec85e40f4cb697bae');
+$balance = $etherscan->accounts->getBalance('0xde0b295669a9fd93d5f28d9ec85e40f4cb697bae');
 ```
 
-https://docs.etherscan.io/api-endpoints/accounts#get-ether-balance-for-multiple-addresses-in-a-single-call
 Get Ether balance for multiple addresses in a single call:
 
 ```php
-$balances = $this->accounts->getBalances(['0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a', '0x63a9975ba31b0b9626b34300f7f627147df1f526']);
+$balances = $etherscan->accounts->getBalances(['0xddbd2b932c763ba5b1b7ae3b362eac3e8d40121a', '0x63a9975ba31b0b9626b34300f7f627147df1f526']);
 ```
 
-https://docs.etherscan.io/api-endpoints/accounts#get-a-list-of-normal-transactions-by-address
-Get a list of 'Normal' transactions by address:
+[Get a list of 'Normal' transactions by address](https://docs.etherscan.io/api-reference/endpoint/txlist):
 ```php
-$transactions = $this->accounts->getTransactions('0xc5102fE9359FD9a28f877a67E36B0F050d81a3CC');
+$transactions = $etherscan->accounts->getTransactions('0xc5102fE9359FD9a28f877a67E36B0F050d81a3CC');
 ```
+
+[Get a list of internal transactions by hash](https://docs.etherscan.io/api-reference/endpoint/txlistinternal-txhash):
+```php
+$transactions = $etherscan->accounts->getInternalTransactionsByHash('0x40eb908387324f2b575b4879cd9d7188f69c8fc9d87c901b9e2daaea4b442170');
+```
+
