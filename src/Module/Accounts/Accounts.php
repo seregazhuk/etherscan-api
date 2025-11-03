@@ -169,7 +169,7 @@ final class Accounts
     }
 
     /**
-     * @see https://docs.etherscan.io/api-endpoints/accounts#get-internal-transactions-by-block-range
+     * @see https://docs.etherscan.io/api-reference/endpoint/txlistinternal-blockrange
      * @return InternalTransaction[]
      */
     public function getInternalTransactionsByBlockRange(int $startBlock, int $endBlock, int $page = 1, int $offset = 10): array
@@ -216,7 +216,7 @@ final class Accounts
     }
 
     /**
-     * @see https://docs.etherscan.io/api-endpoints/accounts#get-a-list-of-erc20-token-transfer-events-by-address
+     * @see https://docs.etherscan.io/api-reference/endpoint/tokentx
      * @return Erc20Event[]
      */
     public function getErc20TokenTransferEvents(?string $address = null, ?string $contractAddress = null, int $page = 1, int $offset = 100): array
@@ -285,7 +285,7 @@ final class Accounts
     }
 
     /**
-     * @see https://docs.etherscan.io/api-endpoints/accounts#get-a-list-of-erc721-token-transfer-events-by-address
+     * @see https://docs.etherscan.io/api-reference/endpoint/tokennfttx
      * @return Erc721Event[]
      */
     public function getErc721TokenTransferEvents(?string $address = null, ?string $contractAddress = null, int $page = 1, int $offset = 100): array
@@ -354,7 +354,7 @@ final class Accounts
     }
 
     /**
-     * @see https://docs.etherscan.io/api-endpoints/accounts#get-a-list-of-erc1155-token-transfer-events-by-address
+     * @see https://docs.etherscan.io/api-reference/endpoint/token1155tx
      * @return Erc1155Event[]
      */
     public function getErc1155TokenTransferEvents(?string $address = null, ?string $contractAddress = null, int $page = 1, int $offset = 100): array

@@ -55,3 +55,22 @@ $transactions = $etherscan->accounts->getTransactions('0xc5102fE9359FD9a28f877a6
 $transactions = $etherscan->accounts->getInternalTransactionsByHash('0x40eb908387324f2b575b4879cd9d7188f69c8fc9d87c901b9e2daaea4b442170');
 ```
 
+[Get internal transactions by block range](https://docs.etherscan.io/api-reference/endpoint/txlistinternal-blockrange):
+```php
+$transactions = $this->accounts->getInternalTransactionsByBlockRange(13481773, 13491773);
+```
+
+[Get ERC20 token transfers by address](https://docs.etherscan.io/api-reference/endpoint/tokentx):
+```php
+$erc20Events = $this->accounts->getErc20TokenTransferEvents('0x4e83362442b8d1bec281594cea3050c8eb01311c', '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2');
+```
+
+[Get ERC721 token transfers by address](https://docs.etherscan.io/api-reference/endpoint/tokennfttx):
+```php
+$erc721Events = $this->accounts->getErc721TokenTransferEvents('0x6975be450864c02b4613023c2152ee0743572325', '0x06012c8cf97bead5deae237070f9587f8e7a266d');
+```
+
+[Get ERC1155 token transfers by address](https://docs.etherscan.io/api-reference/endpoint/token1155tx):
+```php
+$erc1155Events = $this->accounts->getErc1155TokenTransferEvents('0x83f564d180b58ad9a02a449105568189ee7de8cb', '0x76be3b62873462d2142405439777e971754e8e77');
+```
